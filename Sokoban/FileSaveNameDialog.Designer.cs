@@ -47,6 +47,7 @@
             // btnOK
             // 
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOK.Enabled = false;
             this.btnOK.Location = new System.Drawing.Point(139, 118);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 21);
@@ -69,6 +70,8 @@
             this.txtBoxName.Name = "txtBoxName";
             this.txtBoxName.Size = new System.Drawing.Size(193, 20);
             this.txtBoxName.TabIndex = 3;
+            this.txtBoxName.TextChanged += new System.EventHandler(this.txtBoxName_TextChanged);
+            this.txtBoxName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtBoxName_KeyPress);
             // 
             // FileSaveNameDialog
             // 

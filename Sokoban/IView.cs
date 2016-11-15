@@ -16,6 +16,7 @@ namespace Sokoban
         void GameSetup(int moves);
         void SetMoves(int moves);
         void SetGamePosition(int row, int col, Parts part);
-        void FinishGame(string bestPlayer, string bestScore, int thisScore);
+        void FinishGame();
+        void ReestablishKeys();
     }
 }

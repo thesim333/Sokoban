@@ -20,8 +20,8 @@ namespace GameNS
         int GetRows();
         int GetCols();
         Parts GetPartAt(int row, int col);
-        string SaveState();
-        void LoadState(string state);
+        void LoadState(State state);
         string GetName();
+        State MakeState();
     }
 }

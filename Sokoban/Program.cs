@@ -20,7 +20,7 @@ namespace Sokoban
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             FormMain formMain = new FormMain();
-            formMain.AddController(new SokobanController(new Game(), formMain, new Design(), new TheFiler(new Converter()), new FileManager(new Converter())));
+            formMain.AddController(new SokobanController(new Game(), formMain, new Design(), new TheFiler(new Converter())));
             Application.Run(formMain);
         }
     }

@@ -8,35 +8,47 @@ namespace GameNS
 {
     public struct Position
     {
-        private int row;
-        private int col;
-        public int Column
-        {
-            get
-            {
-                return row;
-            }
-            set
-            {
-                row = value;
-            }
-        }
+        private int _row;
+        private int _col;
         public int Row
         {
             get
             {
-                return col;
+                return _row;
             }
             set
             {
-                col = value;
+                _row = value;
+            }
+        }
+        public int Column
+        {
+            get
+            {
+                return _col;
+            }
+            set
+            {
+                _col = value;
             }
         }
 
-        public Position(int _row, int _col)
+        public Position(int row, int col)
         {
-            row = _row;
-            col = _col;
+            _row = row;
+            _col = col;
+        }
+
+        public Position(string xy)
+        {
+            string[] myXY = xy.Split(',');
+            _row = int.Parse(myXY[0]);
+            _col = int.Parse(myXY[1]);
+        }
+
+        public string AsString()
+        {
+            return _row.ToString() + "," + _col.ToString();
         }
     }
 }

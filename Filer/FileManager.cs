@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Filer
@@ -10,9 +6,7 @@ namespace Filer
     public class FileManager : IFileManager
     {
         protected IConverter Converter;
-        public const string GRID = "grid";
-        public const string STATE = "state";
-        public const string STATS = "stats";
+        
 
         public FileManager(IConverter converter)
         {
@@ -81,9 +75,8 @@ namespace Filer
         public string[] GetStatesSaved(string file)
         {
             //returns an array of state names
-            string pat = @"<state-(\w+)>";
-            Regex r = new Regex(pat);
-            Match m = r.Match(file);
+            
+            
             List<string> matches = new List<string>();
 
             while (m.Success)
@@ -105,9 +98,9 @@ namespace Filer
             return GetStuffFromTags(file, STATS);
         }
 
-        public bool StateExists(string file, string stateName)
+        public int StateExists(string file, string stateName)
         {
-            return (GetStartOf(file, GetStateNameTags(stateName)) > 0);
+            return (GetStartOf(file, GetStateNameTags(stateName)));
         }
 
         public string GetBestStat(string file)

@@ -17,30 +17,6 @@ namespace GameNS
         protected List<Position> Blocks;
         protected Stack<Move> MovesMade;
         
-        public string SaveState()
-        {
-            string state = MoveCount.ToString();
-            state += "," + StatePart(Parts.Player, PlayerPos);
-
-            foreach (Position p in Blocks)
-            {
-                state += "," + StatePart(Parts.Block, p);
-            }
-
-            return state;
-        }
-
-        protected string StatePart(Parts part, Position pos)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append((char)part);
-            sb.Append("-");
-            sb.Append(pos.Row);
-            sb.Append("-");
-            sb.Append(pos.Column);
-            return sb.ToString();
-        }
-
         public int GetMoveCount()
         {
             return MoveCount;
@@ -174,28 +150,28 @@ namespace GameNS
          * Loads the environment only from level string
          * places the movables from state string
          */
-        public void LoadState(string state)
+        public void LoadState(State state)
         {
-            string[] splitState = state.Split(',');
-            MoveCount = int.Parse(splitState[0]);
-            
-            for (int i = 1; i < splitState.Length; i++)
+            MoveCount = state.Moves;
+            PlayerPos = state.Player;
+            Blocks = state.Blocks.ToList();
+
+            string[] lg = LevelString.Split(',');
+            LevelGrid = new Parts[lg.Length, lg[0].Length];
+
+            for (int r = 0; r < lg.Length; r++)
             {
-                string[] secondSplit = splitState[i].Split('-');
-                Parts part = (Parts)char.Parse(secondSplit[0]);
-                int row = int.Parse(secondSplit[1]);
-                int col = int.Parse(secondSplit[2]);
-                Position pos = new Position(row, col);
-                LevelGrid[row, col] = GetCombined(pos, part);
-                
-                if (part == Parts.Player)
+                for (int c = 0; c < lg[0].Length; c++)
                 {
-                    PlayerPos = pos;
+                    LevelGrid[r, c] = GetEnvironment((Parts)lg[r][c]);
                 }
-                else
-                {
-                    Blocks.Add(pos);
-                }
+            }
+
+            LevelGrid[PlayerPos.Row, PlayerPos.Column] = GetCombined(PlayerPos, Parts.Player);
+
+            foreach (Position p in Blocks)
+            {
+                LevelGrid[p.Row, p.Column] = GetCombined(p, Parts.Block);
             }
         }
 
@@ -286,8 +262,27 @@ namespace GameNS
                     return Parts.Goal;
                 case Parts.PlayerOnGoal:
                     return Parts.Goal;
+                case Parts.Goal:
+                    return Parts.Goal;
                 default:
                     return Parts.Empty;
+            }
+        }
+
+        protected Parts GetEnvironment(Parts part)
+        {
+            switch (part)
+            {
+                case Parts.BlockOnGoal:
+                    return Parts.Goal;
+                case Parts.PlayerOnGoal:
+                    return Parts.Goal;
+                case Parts.Block:
+                    return Parts.Empty;
+                case Parts.Player:
+                    return Parts.Empty;
+                default:
+                    return part;
             }
         }
 
@@ -317,6 +312,11 @@ namespace GameNS
         public string GetName()
         {
             return LevelName;
+        }
+
+        public State MakeState()
+        {
+            return new State(MoveCount, PlayerPos, Blocks.ToList());
         }
     }
 }

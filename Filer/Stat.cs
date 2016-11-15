@@ -15,13 +15,21 @@ namespace Filer
             {
                 return name;
             }
+            set
+            {
+                name = value;
+            }
         }
-        protected int moves;
-        public int Moves
+        protected string moves;
+        public string Moves
         {
             get
             {
                 return moves;
+            }
+            set
+            {
+                moves = value;
             }
         }
 
@@ -29,13 +37,18 @@ namespace Filer
         {
             string[] line = statLine.Split('-');
             name = line[0];
-            moves = int.Parse(line[1]);
+            moves = line[1];
         }
 
-        public Stat(string theName, int theMoves)
+        public Stat(string theName, string theMoves)
         {
             name = theName;
             moves = theMoves;
+        }
+
+        public Stat()
+        {
+
         }
     }
 }

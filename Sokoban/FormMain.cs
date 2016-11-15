@@ -21,7 +21,7 @@ namespace Sokoban
         protected const int IMAGESIZE = 38;
         protected const int CTRLBTNHEIGHT = 50;
         protected const int CTRLBTNWIDTH = 100;
-        protected const int CTRLBTNSPACEBTWN = 15;
+        protected const int CTRLBTNSPACEBTWN = 5;
         protected const int LEVELDESIGNBTNSIZE = 40;
         protected const int LEVELDESIGNSPACEBTWN = 1;
         protected const int LEVELDESIGNLEFTMARGIN = LEVELMARGIN * 2 + CTRLBTNWIDTH;
@@ -94,6 +94,7 @@ namespace Sokoban
             CreateControlButton("Load Game State", 2, gameLoadState_buttonClick);
             CreateControlButton("Save Game State", 3, gameSaveState_buttonClick);
             CreateControlButton("Close Game", 4, gameClose_buttonClick);
+            CreateControlButton("Undo", 5, undo_buttonClick);
         }
 
         public void GameSetup(int moves)
@@ -102,15 +103,17 @@ namespace Sokoban
             GameButtons();
             MakeLabel();
             SetMoves(moves);
-            CreateMoveButton("W", 33, 350, moveUp_buttonClick);
-            CreateMoveButton("A", 10, 392, moveLeft_buttonClick);
-            CreateMoveButton("S", 33, 434, moveDown_buttonClick);
-            CreateMoveButton("D", 56, 392, moveRight_buttonClick);
+            CreateMoveButton("W", 33, 360, moveUp_buttonClick);
+            CreateMoveButton("A", 10, 402, moveLeft_buttonClick);
+            CreateMoveButton("S", 33, 444, moveDown_buttonClick);
+            CreateMoveButton("D", 56, 402, moveRight_buttonClick);
+            this.KeyPress -= FormMain_KeyPress;
+            this.KeyPress += FormMain_KeyPress;
         }
 
         public void SetGamePosition(int row, int col, Parts part)
         {
-            int rectCol = LEVELMARGIN + CTRLBTNWIDTH + SQUARESIDESIZE * col;
+            int rectCol = LEVELMARGIN + 10 + CTRLBTNWIDTH + SQUARESIDESIZE * col; //10 is the space between buttons and the grid
             int rectRow = LEVELMARGIN + SQUARESIDESIZE * row;
             MyGraphics.DrawRectangle(Pens.Black, new Rectangle(rectCol, rectRow, SQUARESIDESIZE, SQUARESIDESIZE));
             Rectangle inner = new Rectangle(rectCol + 1, rectRow + 1, IMAGESIZE, IMAGESIZE);
@@ -119,6 +122,11 @@ namespace Sokoban
             {
                 MyGraphics.DrawImage(IH.GetMyPart(part), inner);
             }
+        }
+
+        public void ReestablishKeys()
+        {
+            this.KeyPress += FormMain_KeyPress;
         }
 
         public void DisplayMain()
@@ -135,8 +143,8 @@ namespace Sokoban
         {
             Label moves = new Label();
             moves.Name = "lblMoves";
-            moves.Location = new Point(LEVELMARGIN, 323);
-            moves.Font = new Font("Rockwell", 16);
+            moves.Location = new Point(LEVELMARGIN, 337);
+            moves.Font = new Font("Rockwell", 14);
             moves.ForeColor = Color.Black;
             this.Controls.Add(moves);
         }
@@ -148,12 +156,13 @@ namespace Sokoban
             lblMoves.Text = x;
         }
 
-        public void FinishGame(string bestPlayer, string bestScore, int thisScore)
+        public void FinishGame()
         {
             this.KeyPress -= FormMain_KeyPress;
-            MyGraphics.DrawString("Complete", new Font("Rockwell", 24), Brushes.Red, new Point(50, 50));
-            MyGraphics.DrawString("Best Score: " + bestPlayer + " " + bestScore, new Font("Rockwell", 16), Brushes.Black, new Point(50, 250));
-            MyGraphics.DrawString("Your Score: " + thisScore.ToString(), new Font("Rockwell", 16), Brushes.Black, new Point(50, 350));
+            this.Controls.Clear();
+            CreateControlButton("Restart Game", 0, restartGame_buttonClick);
+            CreateControlButton("Load New Level", 1, gameLoad_buttonClick);
+            CreateControlButton("Load Game State", 2, gameLoadState_buttonClick);
         }
 
         public void CreateLevelGridButton(int row, int col, Parts part)
@@ -295,24 +304,31 @@ namespace Sokoban
 
         protected void gameClose_buttonClick(object sender, System.EventArgs e)
         {
+            this.KeyPress -= FormMain_KeyPress;
             Ctrl.CloseGame();
         }
 
         private void FormMain_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == (char)Keys.Up)
+            //MoveFromKey((Keys)e.KeyChar);
+            MoveFromKey(char.ToUpper((char)e.KeyChar));
+        }
+
+        protected void MoveFromKey(char k)
+        {
+            if (k == 'W')
             {
                 Ctrl.Move(Direction.Up);
             }
-            else if (e.KeyChar == (char)Keys.Down)
+            else if (k == 'S')
             {
                 Ctrl.Move(Direction.Down);
             }
-            else if (e.KeyChar == (char)Keys.Left)
+            else if (k == 'A')
             {
                 Ctrl.Move(Direction.Left);
             }
-            else if (e.KeyChar == (char)Keys.Right)
+            else if (k == 'D')
             {
                 Ctrl.Move(Direction.Right);
             }
@@ -336,6 +352,11 @@ namespace Sokoban
         protected void moveRight_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.Move(Direction.Right);
+        }
+
+        protected void undo_buttonClick(object sender, System.EventArgs e)
+        {
+            Ctrl.Undo();
         }
     }
 }

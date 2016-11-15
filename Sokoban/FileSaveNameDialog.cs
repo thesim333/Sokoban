@@ -31,5 +31,27 @@ namespace Sokoban
         {
             lblNameThing.Text = l;
         }
+
+        private void txtBoxName_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            SwitchOK();
+        }
+
+        private void txtBoxName_TextChanged(object sender, EventArgs e)
+        {
+            SwitchOK();
+        }
+
+        protected void SwitchOK()
+        {
+            if (String.IsNullOrEmpty(txtBoxName.Text))
+            {
+                btnOK.Enabled = false;
+            }
+            else
+            {
+                btnOK.Enabled = true;
+            }
+        }
     }
 }

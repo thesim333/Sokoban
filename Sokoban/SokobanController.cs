@@ -7,7 +7,6 @@ using Filer;
 using GameNS;
 using Designer;
 using System.Windows.Forms;
-using System.Windows;
 
 namespace Sokoban
 {
@@ -17,7 +16,6 @@ namespace Sokoban
         protected IView View;
         protected IDesign Designer;
         protected IFiler Filer;
-        protected IFileManager FM;
         protected const string GAME_STRING = "Game";
         protected const string DESIGN_STRING = "Design";
 
@@ -37,13 +35,12 @@ namespace Sokoban
             }
         }
 
-        public SokobanController(IGame game, IView view, IDesign design, IFiler filer, IFileManager fm)
+        public SokobanController(IGame game, IView view, IDesign design, IFiler filer)
         {
             Game = game;
             View = view;
             Designer = design;
             Filer = filer;
-            FM = fm;
         }
 
         public void Move(Direction d)
@@ -58,14 +55,36 @@ namespace Sokoban
 
             if (Game.IsFinished())
             {
-                string player = GetPlayerName();
-                string fileName = Game.GetName();
-                string file = Filer.Load(fileName);
-                int thisScore = Game.GetMoveCount();
-                Filer.ReplaceFile(fileName, FM.GetFileWithNewStatInserted(fileName, player, thisScore));
-                string[] bestScore = FM.GetBestStat(file).Split('-');
-                View.FinishGame(bestScore[0], bestScore[1], thisScore);
+                FinishGame();
             }
+        }
+
+        protected void FinishGame()
+        {
+            string player = GetPlayerName();
+            string fileName = Game.GetName();
+            int thisScore = Game.GetMoveCount();
+            Filer.AppendStat(fileName, player, thisScore);
+            View.FinishGame();
+            DisplayBestScores();
+        }
+
+        protected void DisplayBestScores()
+        {
+            Stat[] scores = Filer.GetBestX_Stats(Game.GetName(), 10);
+            StringBuilder display = new StringBuilder();
+
+            for (int i = 0; i < scores.Length; i++)
+            {
+                display.Append(i);
+                display.Append("\t");
+                display.Append(scores[i].Name);
+                display.Append("\t");
+                display.Append(scores[i].Moves);
+                display.Append("\n");
+            }
+
+            MessageBox.Show(display.ToString(), "Best Scores");
         }
 
         protected string GetPlayerName()
@@ -102,15 +121,14 @@ namespace Sokoban
             if (levDia.ShowDialog() == DialogResult.OK)
             {
                 string fileName = levDia.GetSelected();
-                string file = Filer.Load(fileName);
-                string level = FM.GetLevel(file);
+                string grid = Filer.LoadGrid(fileName);
                 switch (which)
                 {
                     case GAME_STRING:
-                        PlayLevel(fileName, level);
+                        PlayLevel(fileName, grid);
                         break;
                     case DESIGN_STRING:
-                        OpenDesignerLoad(fileName, level);
+                        OpenDesignerLoad(fileName, grid);
                         break;
                 }
             }
@@ -139,58 +157,29 @@ namespace Sokoban
 
         public void LoadGameState()
         {
-            string file = Filer.Load(Game.GetName());
-            string[] states = FM.GetStatesSaved(file);
-            string theState;
-
-            if (states.Length > 0)
-            {
-                theState = GetStateToLoad(file, states);
-
-                if (theState.Length > 0)
-                {
-                    Game.LoadState(theState);
-                    CreateGameView();
-                }
-            }
-        }
-
-        protected string GetStateToLoad(string file, string[] states)
-        {
+            string fileName = Game.GetName();
+            string[] states = Filer.GetAllStates(fileName);
             LoadFileFromListDialog levDia = new LoadFileFromListDialog();
             levDia.SetText("Stats for " + Game.GetName());
             levDia.InsertLevels(states);
-            string toReturn = string.Empty;
 
-            if (levDia.ShowDialog() == DialogResult.OK)
+            if (states.Length > 0 && levDia.ShowDialog() == DialogResult.OK)
             {
-                toReturn = FM.GetState(file, levDia.GetSelected());
+                Game.LoadState(Filer.LoadState(fileName, levDia.GetSelected()));
+                CreateGameView();
             }
-
-            levDia.Dispose();
-            return toReturn;
         }
 
-        public void SaveGameState()
+        public void Undo()
         {
-            FileSaveNameDialog sn = new FileSaveNameDialog();
-            sn.SetLabel("Name for state:");
-            
-            if (sn.ShowDialog() == DialogResult.OK && sn.GetName().Length > 0)
+            Position[] thePositions = Game.Undo();
+            View.SetMoves(Game.GetMoveCount());
+
+            foreach (Position p in thePositions)
             {
-                string file = Filer.Load(Game.GetName());
-                string name = sn.GetName();
-                string state = Game.SaveState();
-                if (FM.StateExists(file, name) &&
-                    MessageBox.Show("State Exists", "OK to overwrite?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    Filer.ReplaceFile(name, FM.OverwriteSavedState(file, name, state));
-                }
-                else if (!FM.StateExists(file, name))
-                {
-                    Filer.AppendState(file, name, state);
-                }
+                View.SetGamePosition(p.Row, p.Column, Game.GetPartAt(p.Row, p.Column));
             }
+            View.ReestablishKeys();
         }
 
         protected void OpenDesignerLoad(string fileName, string level)
@@ -255,7 +244,7 @@ namespace Sokoban
             }
         }
 
-        private bool CanExitDesignerWithUnsavedChanges()
+        protected bool CanExitDesignerWithUnsavedChanges()
         {
             DialogResult result = MessageBox.Show("Do you wish to save before closing?", "Level has unsaved changes", MessageBoxButtons.YesNoCancel);
 
@@ -271,7 +260,7 @@ namespace Sokoban
             return true;
         }
 
-        private bool SaveLevelInDesigner()
+        protected bool SaveLevelInDesigner()
         {
             bool returnMe = false;
             FileSaveNameDialog sn = new FileSaveNameDialog();
@@ -279,15 +268,11 @@ namespace Sokoban
 
             while (true)
             {
-                if (sn.ShowDialog() == DialogResult.OK) //if file doesn't exist or it's ok to overwrite
+                if (sn.ShowDialog() == DialogResult.OK) 
                 {
                     string toFileName = sn.GetName();
-
-                    if (toFileName.Length > 0 &&
-                       (!Filer.LevelExists(toFileName) ||
-                        MessageBox.Show("Overwite Level?",
-                        "Level file already exists.",
-                        MessageBoxButtons.YesNo) == DialogResult.Yes))
+                    //if file doesn't exist or it's ok to overwrite
+                    if (CanSaveLevel(toFileName))  
                     {
                         Filer.Save(toFileName, Designer);
                         returnMe = true;
@@ -302,6 +287,67 @@ namespace Sokoban
             }
             sn.Dispose();
             return returnMe;
+        }
+
+        protected bool CanSaveLevel(string fileName)
+        {
+            if (!Filer.LevelExists(fileName))
+            {
+                return true;
+            }
+            else if (MessageBox.Show("Overwite Level?", "Level file already exists.", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+        public void SaveGameState()
+        {
+            FileSaveNameDialog sn = new FileSaveNameDialog();
+            sn.SetLabel("Name for state:");
+
+            while (true)
+            {
+                if (sn.ShowDialog() == DialogResult.OK)
+                {
+                    if (DidSave(sn.GetName()))
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        protected bool DidSave(string stateName)
+        {
+            State state = Game.MakeState();
+            string fileName = Game.GetName();
+
+            if (Filer.StateExists(fileName, stateName))
+            {
+                if (MessageBox.Show("This state exists, ok to replace?", "Replace?", MessageBoxButtons.YesNo) == DialogResult.No)
+                {
+                    return false;
+                }
+                else
+                {
+                    Filer.ReplaceState(fileName, stateName, state);
+                }
+            }
+            else
+            {
+                Filer.AppendState(fileName, stateName, state);
+            }
+
+            return true;
         }
     }
 }

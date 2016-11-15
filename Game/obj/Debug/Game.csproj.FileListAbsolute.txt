@@ -14,8 +14,6 @@ C:\Users\lamee\OneDrive\Documents\Visual Studio 2015\Projects\SokobanGameV2\Game
 C:\Users\lamee\OneDrive\Documents\Visual Studio 2015\Projects\SokobanGameV2\Game\obj\Debug\Game.pdb
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\bin\Debug\Game.dll
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\bin\Debug\Game.pdb
-C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\bin\Debug\Filer.dll
-C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\bin\Debug\Filer.pdb
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\obj\Debug\Game.csprojResolveAssemblyReference.cache
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\obj\Debug\Game.dll
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\obj\Debug\Game.pdb
