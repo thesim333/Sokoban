@@ -43,7 +43,6 @@
     <Compile Include="Game.cs" />
     <Compile Include="IGame.cs" />
     <Compile Include="Move.cs" />
-    <Compile Include="Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="State.cs" />
   </ItemGroup>

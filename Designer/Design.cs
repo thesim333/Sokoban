@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Designer
+﻿namespace Designer
 {
     public class Design : IDesign
     {
@@ -78,6 +73,49 @@ namespace Designer
             Parts[,] parts = new Parts[x, y];
             for (int i = 0; i < x * y; i++) parts[i % x, i / x] = initialValue;
             return parts;
+        }
+
+        public bool HasOnePlayer()
+        {
+            int players = 0;
+
+            for (int r = 0; r < LevelGrid.GetLength(0); r++)
+            {
+                for (int c = 0; c < LevelGrid.GetLength(1); c++)
+                {
+                    if (LevelGrid[r, c] == Parts.Player 
+                        || LevelGrid[r, c] == Parts.PlayerOnGoal)
+                    {
+                        players++;
+                    }
+                }
+            }
+            return (players == 1);
+        }
+
+        public bool BlocksEqualTargets()
+        {
+            int blocks = 0;
+            int targets = 0;
+
+            for (int r = 0; r < LevelGrid.GetLength(0); r++)
+            {
+                for (int c = 0; c < LevelGrid.GetLength(1); c++)
+                {
+                    if (LevelGrid[r, c] == Parts.Block 
+                        || LevelGrid[r, c] == Parts.BlockOnGoal)
+                    {
+                        blocks++;
+                    }
+                    else if (LevelGrid[r, c] == Parts.Goal 
+                        || LevelGrid[r, c] == Parts.PlayerOnGoal 
+                        || LevelGrid[r, c] == Parts.BlockOnGoal)
+                    {
+                        targets++;
+                    }
+                }
+            }
+            return (blocks == targets);
         }
     }
 }
