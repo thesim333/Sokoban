@@ -1,0 +1,5 @@
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\GameGlobals\bin\Debug\GameGlobals.dll
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\GameGlobals\bin\Debug\GameGlobals.pdb
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\GameGlobals\obj\Debug\GameGlobals.csprojResolveAssemblyReference.cache
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\GameGlobals\obj\Debug\GameGlobals.dll
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\GameGlobals\obj\Debug\GameGlobals.pdb

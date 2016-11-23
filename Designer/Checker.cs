@@ -1,18 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using GameGlobals;
 
 namespace Designer
 {
-    public class Checker
+    public class Checker : IChecker
     {
         protected char[,] MyGrid;
         protected Position Player;
         protected Queue<Position> TheQ;
 
-        public Checker(IDesign des)
+        /// <summary>
+        /// Inserts the designer.
+        /// Makes the checker grid.
+        /// Places Walls.
+        /// Player as start location Position.
+        /// </summary>
+        /// <param name="des">The Designer object as IDesign</param>
+        public void InsertDesigner(IDesign des)
         {
             int rows = des.GetRowCount();
             int cols = des.GetColumnCount();
@@ -33,11 +37,23 @@ namespace Designer
             }
         }
 
+        /// <summary>
+        /// Marks the position as queued.
+        /// </summary>
+        /// <param name="p">The position</param>
         protected void MarkPos(Position p)
         {
             MyGrid[p.Row, p.Column] = '1';
         }
 
+        /// <summary>
+        /// Runs the check algorithm to see if the player can reach the edge of the grid.
+        /// Starting with the player position.
+        /// Get the next position from the queue,
+        /// If the position is not next to the edge,
+        /// Queue the neighbours of this position.
+        /// </summary>
+        /// <returns><c>true</c>if the player is walled on all sides; otherwise, <c>false</c></returns>
         public bool PlayerCannotReachEdge()
         {
             TheQ = new Queue<Position>();
@@ -60,6 +76,13 @@ namespace Designer
             return true;
         }
 
+        /// <summary>
+        /// Determines whether the current position is next to an edge.
+        /// </summary>
+        /// <param name="p">The position</param>
+        /// <returns>
+        ///   <c>true</c> if the position is next to an edge; otherwise, <c>false</c>.
+        /// </returns>
         protected bool IsNextToEdge(Position p)
         {
             if (p.Row < 0 || p.Column < 0 || p.Row > MyGrid.GetLength(0) || p.Column > MyGrid.GetLength(1))
@@ -72,6 +95,11 @@ namespace Designer
             }
         }
 
+        /// <summary>
+        /// Finds the neighbours of the current position.
+        /// If these neighbours are not already queued, queue them.
+        /// </summary>
+        /// <param name="p">The position</param>
         protected void FindNeighbours(Position p)
         {
             for (int r = p.Row - 1; r <= p.Row + 1; r++)

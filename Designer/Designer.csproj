@@ -44,8 +44,13 @@
     <Compile Include="Design.cs" />
     <Compile Include="IChecker.cs" />
     <Compile Include="IDesign.cs" />
-    <Compile Include="Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameGlobals\GameGlobals.csproj">
+      <Project>{2784d572-09c1-4224-ac5f-23744c0f6ea7}</Project>
+      <Name>GameGlobals</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

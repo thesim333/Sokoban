@@ -1,5 +1,5 @@
 ﻿using System.Drawing;
-using Designer;
+using GameGlobals;
 
 namespace Sokoban
 {

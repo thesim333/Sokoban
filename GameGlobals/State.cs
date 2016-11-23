@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Designer;
 
-namespace GameNS
+namespace GameGlobals
 {
     public class State
     {

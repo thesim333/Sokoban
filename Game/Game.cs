@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Designer;
+using GameGlobals;
 
 namespace GameNS
 {
@@ -13,12 +13,23 @@ namespace GameNS
         protected Position PlayerPos;
         protected List<Position> Blocks;
         protected Stack<Move> MovesMade;
-        
+
+        /// <summary>
+        /// Gets the move count.
+        /// </summary>
+        /// <returns>The move count</returns>
         public int GetMoveCount()
         {
             return MoveCount;
         }
 
+        /// <summary>
+        /// Determines whether this game is finished.
+        /// If all the block positions line up with the positions of targets the game is finished.
+        /// </summary>
+        /// <returns>
+        ///   <c>true</c> if the game is finished; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsFinished()
         {
             foreach (Position p in Blocks)
@@ -32,25 +43,42 @@ namespace GameNS
             return true;
         }
 
-        /**
-         * Stores the name and level string from the level file
-         */
+        /// <summary>
+        /// Loads a new level.
+        /// </summary>
+        /// <param name="name">The name of the level.</param>
+        /// <param name="newLevel">The new level as a string.</param>
         public void Load(string name, string newLevel)
         {
             LevelName = name;
             LevelString = newLevel;
         }
 
+        /// <summary>
+        /// Gets the rows in the level grid.
+        /// </summary>
+        /// <returns>The rows</returns>
         public int GetRows()
         {
             return LevelGrid.GetLength(1);
         }
 
+        /// <summary>
+        /// Gets the columns in the level grid.
+        /// </summary>
+        /// <returns>The columns</returns>
         public int GetCols()
         {
             return LevelGrid.GetLength(0);
         }
 
+        /// <summary>
+        /// Moves the player in the specified move direction.
+        /// Moves a player or a player and a block or does nothing.
+        /// If the move is successful store the move in the move stack and increase move count.
+        /// </summary>
+        /// <param name="moveDirection">The move direction.</param>
+        /// <returns>The positions involved in the move or an empty array</returns>
         public Position[] Move(Direction moveDirection)
         {
             Position positionTwo = GetPositionFromMove(moveDirection, PlayerPos);
@@ -84,6 +112,11 @@ namespace GameNS
             return new Position[0];
         }
 
+        /// <summary>
+        /// Moves the block position.
+        /// </summary>
+        /// <param name="start">The start position.</param>
+        /// <param name="end">The end position.</param>
         protected void MoveBlockPos(Position start, Position end)
         {
             for (int i = 0; i < Blocks.Count; i++)
@@ -96,6 +129,9 @@ namespace GameNS
             }
         }
 
+        /// <summary>
+        /// Restarts the game.
+        /// </summary>
         public void Restart()
         {
             MoveCount = 0;
@@ -103,18 +139,10 @@ namespace GameNS
             MakeLevelGrid();
         }
 
-        protected void FindMyMovable(Parts part, Position pos)
-        {
-            if (part == Parts.Player || part == Parts.PlayerOnGoal)
-            {
-                PlayerPos = pos;
-            }
-            else if (part == Parts.Block || part == Parts.BlockOnGoal)
-            {
-                Blocks.Add(pos);
-            }
-        }
-
+        /// <summary>
+        /// Makes the level grid from the string.
+        /// Assigns the player position and the block positions.
+        /// </summary>
         protected void MakeLevelGrid()
         {
             string[] lg = LevelString.Split(',');
@@ -141,12 +169,12 @@ namespace GameNS
             }
         }
 
-        /**
-         * Accepts the string from a previously saved state.
-         * moves,player-pos,block-pos,block-pos...
-         * Loads the environment only from level string
-         * places the movables from state string
-         */
+        /// <summary>
+        /// Loads the state.
+        /// Makes a grid that is only the environmental parts from the string.
+        /// Combines the movables into the positions saved for these.
+        /// </summary>
+        /// <param name="state">The state from the file.</param>
         public void LoadState(State state)
         {
             MoveCount = state.Moves;
@@ -172,6 +200,10 @@ namespace GameNS
             }
         }
 
+        /// <summary>
+        /// Undo a move
+        /// </summary>
+        /// <returns></returns>
         public Position[] Undo()
         {
             if (MovesMade.Count > 0)
@@ -191,11 +223,23 @@ namespace GameNS
             return new Position[0];
         }
 
+        /// <summary>
+        /// Checks if too positions contain the same x and y integers.
+        /// </summary>
+        /// <param name="a">Position a</param>
+        /// <param name="b">Position b</param>
+        /// <returns></returns>
         protected bool PositionsAreSame(Position a, Position b)
         {
             return (a.Row == b.Row && a.Column == b.Column);
         }
 
+        /// <summary>
+        /// Gets the neighbour position in the direction of the move.
+        /// </summary>
+        /// <param name="direction">The direction.</param>
+        /// <param name="p">The position.</param>
+        /// <returns>The new position to be moved to</returns>
         protected Position GetPositionFromMove(Direction direction, Position p)
         {
             switch (direction)
@@ -216,17 +260,33 @@ namespace GameNS
             return p;
         }
 
+        /// <summary>
+        /// Checks if the position is clear.
+        /// </summary>
+        /// <param name="pos">The position.</param>
+        /// <returns><c>true</c> if the position is empty or a goal; otherwise, <c>false</c></returns>
         protected bool PositionClear(Position pos)
         {
             return (LevelGrid[pos.Row, pos.Column] == Parts.Empty || LevelGrid[pos.Row, pos.Column] == Parts.Goal);
         }
 
+        /// <summary>
+        /// Checks if the position contains a block.
+        /// </summary>
+        /// <param name="pos">The position.</param>
+        /// <returns><c>true</c> if the position contains a block or a block on goal; otherwise, <c>false</c></returns>
         protected bool PositionContainsBlock(Position pos)
         {
             return ((LevelGrid[pos.Row, pos.Column] == Parts.Block) ||
                 (LevelGrid[pos.Row, pos.Column] == Parts.BlockOnGoal));
         }
 
+        /// <summary>
+        /// Position end becomes the part at position start.
+        /// Position start becomes empty or target.
+        /// </summary>
+        /// <param name="start">Position start.</param>
+        /// <param name="end">Position end.</param>
         protected void MoveToNewPosReplaceWithEmpty(Position start, Position end)
         {
             Parts movable = GetMovable(start);
@@ -234,6 +294,11 @@ namespace GameNS
             LevelGrid[end.Row, end.Column] = GetCombined(end, movable);
         }
 
+        /// <summary>
+        /// Gets the movable part from the position, without the enviroment part.
+        /// </summary>
+        /// <param name="pos">The position.</param>
+        /// <returns></returns>
         protected Parts GetMovable(Position pos)
         {
             switch (LevelGrid[pos.Row, pos.Column])
@@ -251,6 +316,11 @@ namespace GameNS
             }
         }
 
+        /// <summary>
+        /// Gets the environment part from the position, without the movable part.
+        /// </summary>
+        /// <param name="pos">The position.</param>
+        /// <returns></returns>
         protected Parts GetEnvironment(Position pos)
         {
             switch (LevelGrid[pos.Row, pos.Column])
@@ -266,6 +336,11 @@ namespace GameNS
             }
         }
 
+        /// <summary>
+        /// Gets the environment from the part, without the movable part.
+        /// </summary>
+        /// <param name="part">The part.</param>
+        /// <returns></returns>
         protected Parts GetEnvironment(Parts part)
         {
             switch (part)
@@ -283,6 +358,12 @@ namespace GameNS
             }
         }
 
+        /// <summary>
+        /// Gets the combined enviroment from pos and movable from m.
+        /// </summary>
+        /// <param name="pos">The position.</param>
+        /// <param name="m">The movable part.</param>
+        /// <returns>The combined part</returns>
         protected Parts GetCombined(Position pos, Parts m)
         {
             Parts e = LevelGrid[pos.Row, pos.Column];
@@ -301,16 +382,30 @@ namespace GameNS
             }
         }
 
+        /// <summary>
+        /// Gets the part at grid [row, column].
+        /// </summary>
+        /// <param name="row">The row.</param>
+        /// <param name="col">The column.</param>
+        /// <returns>The part</returns>
         public Parts GetPartAt(int row, int col)
         {
             return LevelGrid[row, col];
         }
 
+        /// <summary>
+        /// Gets the name of the level.
+        /// </summary>
+        /// <returns></returns>
         public string GetName()
         {
             return LevelName;
         }
 
+        /// <summary>
+        /// Makes the state to be saved.
+        /// </summary>
+        /// <returns>State object</returns>
         public State MakeState()
         {
             return new State(MoveCount, PlayerPos, Blocks.ToList());

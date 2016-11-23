@@ -118,6 +118,10 @@
       <Project>{383be6f1-67fa-4661-af95-4fb3fbfb1e25}</Project>
       <Name>Filer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameGlobals\GameGlobals.csproj">
+      <Project>{2784d572-09c1-4224-ac5f-23744c0f6ea7}</Project>
+      <Name>GameGlobals</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Game\Game.csproj">
       <Project>{ab6147c4-2eda-4e90-9018-ae68b23cd9c5}</Project>
       <Name>Game</Name>

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Designer
 {
-    interface IChecker
+    public interface IChecker
     {
         bool PlayerCannotReachEdge();
+        void InsertDesigner(IDesign des);
     }
 }

@@ -9,6 +9,11 @@ namespace Filer
 {
     public class Converter : IConverter
     {
+        /// <summary>
+        /// Compresses the string.
+        /// </summary>
+        /// <param name="uncompressed">The uncompressed string.</param>
+        /// <returns>The compressed string.</returns>
         public string Compress(string uncompressed)
         {
             string replaced = ReplaceWhiteSpace(uncompressed);
@@ -16,6 +21,11 @@ namespace Filer
             return MakeCompressedFromGroups(groupsOfSame);
         }
 
+        /// <summary>
+        /// Expands the compressed string.
+        /// </summary>
+        /// <param name="compressed">The compressed string.</param>
+        /// <returns>The uncompressed string</returns>
         public string Expand(string compressed)
         {
             StringBuilder sb = new StringBuilder();
@@ -44,12 +54,22 @@ namespace Filer
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Replaces the white space with '-'.
+        /// </summary>
+        /// <param name="uncompressed">The uncompressed string.</param>
+        /// <returns>The uncompressed string with altered whitespace.</returns>
         protected string ReplaceWhiteSpace(string uncompressed)
         {
             Regex r = new Regex("\\s");
             return r.Replace(uncompressed, "-");
         }
 
+        /// <summary>
+        /// Group the string by consecutive same characters.
+        /// </summary>
+        /// <param name="uncompressed">The uncompressed string.</param>
+        /// <returns>A list of strings with same characters.</returns>
         protected List<string> MakeGroupsOfSame(string uncompressed)
         {
             List<string> groups = new List<string>();
@@ -72,6 +92,11 @@ namespace Filer
             return groups;
         }
 
+        /// <summary>
+        /// Makes the compressed string from groups of same characters.
+        /// </summary>
+        /// <param name="groups">The groups.</param>
+        /// <returns>The compressed string.</returns>
         protected string MakeCompressedFromGroups(List<string> groups)
         {
             StringBuilder sb = new StringBuilder();
@@ -92,6 +117,12 @@ namespace Filer
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Gets the index of the next non number character in the string.
+        /// </summary>
+        /// <param name="compressed">The compressed.</param>
+        /// <param name="index">The index.</param>
+        /// <returns>The index</returns>
         protected int GetIndexNextNonNumeric(string compressed, int index)
         {
             for (int i = 0; i + index < compressed.Length; i++)

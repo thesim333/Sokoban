@@ -1,16 +1,7 @@
-﻿namespace Designer
-{
-    public enum Parts
-    {
-        Wall = (int)'#',
-        Empty = (int)'-',
-        Player = (int)'@',
-        Goal = (int)'.',
-        Block = (int)'$',
-        BlockOnGoal = (int)'*',
-        PlayerOnGoal = (int)'+'
-    };
+﻿using GameGlobals;
 
+namespace Designer
+{
     public interface IDesign
     {
         void NewLevel(int rows, int cols);
@@ -23,5 +14,7 @@
         bool HasUnsavedChanges();
         void SetSaved();
         bool HasOnePlayer();
+        bool BlocksEqualTargets();
+        void SetName(string name);
     }
 }

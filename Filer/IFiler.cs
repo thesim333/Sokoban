@@ -1,5 +1,5 @@
 ﻿using Designer;
-using GameNS;
+using GameGlobals;
 
 namespace Filer
 {

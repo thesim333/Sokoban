@@ -2,8 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Designer;
-using GameNS;
+using GameGlobals;
 
 namespace Sokoban
 {
@@ -23,6 +22,9 @@ namespace Sokoban
         protected ImageHandler IH;
         protected RadioButton[] partsSelector;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FormMain"/> class as an IView.
+        /// </summary>
         public FormMain()
         {
             InitializeComponent();
@@ -32,23 +34,39 @@ namespace Sokoban
             MakeLevelDesignRadioPartControl();
         }
 
+        /// <summary>
+        /// Handles the Shown event of the FormMain control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void FormMain_Shown(object sender, EventArgs e)
         {
             DisplayMain();
         }
 
+        /// <summary>
+        /// Adds the controller.
+        /// </summary>
+        /// <param name="ctrl">The controller.</param>
         public void AddController(SokobanController ctrl)
         {
             Ctrl = ctrl;
         }
 
-        //Display Changes
+        /// <summary>
+        /// Resets the form to empty white.
+        /// </summary>
         protected void ResetForm()
         {
             this.Controls.Clear();
             MyGraphics.Clear(Color.White);
         }
 
+        /// <summary>
+        /// Changes the view to the designer with a new a bew empty level.
+        /// </summary>
+        /// <param name="rows">The rows.</param>
+        /// <param name="cols">The cols.</param>
         public void DesignerNewLevel(int rows, int cols)
         {
             ResetForm();
@@ -68,20 +86,30 @@ namespace Sokoban
             DesignerButtons();
         }
 
+        /// <summary>
+        /// Changes the view to the designer waiting for the level to be loaded from a file.
+        /// </summary>
         public void DesignerLoadLevel()
         {
             ResetForm();
             DesignerButtons();
         }
 
+        /// <summary>
+        /// Creates the control buttons for the designer.
+        /// </summary>
         protected void DesignerButtons()
         {
             CreateControlButton("New Level", 0, levelDesignerNew_buttonClick);
             CreateControlButton("Save Level", 1, levelDesignerSave_buttonClick);
             CreateControlButton("Load Level", 2, levelDesignerLoad_buttonClick);
-            CreateControlButton("Close Designer", 3, levelDesignerClose_buttonClick);
+            CreateControlButton("Check Level", 3, checkDesignerLevel_buttonClick);
+            CreateControlButton("Close Designer", 4, levelDesignerClose_buttonClick);
         }
 
+        /// <summary>
+        /// Creates the control buttons for the game.
+        /// </summary>
         protected void GameButtons()
         {
             CreateControlButton("Restart Game", 0, restartGame_buttonClick);
@@ -92,11 +120,15 @@ namespace Sokoban
             CreateControlButton("Undo", 5, undo_buttonClick);
         }
 
+        /// <summary>
+        /// Setup the view for the game
+        /// </summary>
+        /// <param name="moves">The moves from the game to display</param>
         public void GameSetup(int moves)
         {
             ResetForm();
             GameButtons();
-            MakeLabel();
+            MakeMoveLabel();
             SetMoves(moves);
             CreateMoveButton("W", 33, 360, moveUp_buttonClick);
             CreateMoveButton("A", 10, 402, moveLeft_buttonClick);
@@ -106,6 +138,12 @@ namespace Sokoban
             this.KeyPress += FormMain_KeyPress;
         }
 
+        /// <summary>
+        /// Draws a game position with the image representing the part from that position in the game.
+        /// </summary>
+        /// <param name="row">The row.</param>
+        /// <param name="col">The col.</param>
+        /// <param name="part">The part.</param>
         public void SetGamePosition(int row, int col, Parts part)
         {
             int rectCol = LEVELMARGIN + 10 + CTRLBTNWIDTH + SQUARESIDESIZE * col; //10 is the space between buttons and the grid
@@ -119,11 +157,9 @@ namespace Sokoban
             }
         }
 
-        public void ReestablishKeys()
-        {
-            this.KeyPress += FormMain_KeyPress;
-        }
-
+        /// <summary>
+        /// Creates the main display.
+        /// </summary>
         public void DisplayMain()
         {
             MyGraphics.Clear(Color.White);
@@ -133,8 +169,10 @@ namespace Sokoban
             CreateControlButton("Designer - Load Level", 2, levelDesignerLoad_buttonClick);
         }
 
-        //Misc
-        protected void MakeLabel()
+        /// <summary>
+        /// Makes the label showing the moves made in the game.
+        /// </summary>
+        protected void MakeMoveLabel()
         {
             Label moves = new Label();
             moves.Name = "lblMoves";
@@ -144,6 +182,10 @@ namespace Sokoban
             this.Controls.Add(moves);
         }
 
+        /// <summary>
+        /// Displays the current move count from game.
+        /// </summary>
+        /// <param name="moves">The moves.</param>
         public void SetMoves(int moves)
         {
             Label lblMoves = this.Controls.Find("lblMoves", false).FirstOrDefault() as Label;
@@ -151,15 +193,27 @@ namespace Sokoban
             lblMoves.Text = x;
         }
 
-        public void FinishGame()
+        /// <summary>
+        /// Finishes the game. Changes the view to only show buttons that can start a new game.
+        /// </summary>
+        /// <param name="moves">The moves from the finish of the game.</param>
+        public void FinishGame(int moves)
         {
             this.KeyPress -= FormMain_KeyPress;
             this.Controls.Clear();
             CreateControlButton("Restart Game", 0, restartGame_buttonClick);
             CreateControlButton("Load New Level", 1, gameLoad_buttonClick);
             CreateControlButton("Load Game State", 2, gameLoadState_buttonClick);
+            SetMoves(moves);
         }
 
+        /// <summary>
+        /// Creates a level grid button.
+        /// Displays the image representing the part.
+        /// </summary>
+        /// <param name="row">The row.</param>
+        /// <param name="col">The col.</param>
+        /// <param name="part">The part.</param>
         public void CreateLevelGridButton(int row, int col, Parts part)
         {
             Point p = new Point(LEVELDESIGNLEFTMARGIN + col * LEVELDESIGNBTNSIZE,
@@ -179,6 +233,13 @@ namespace Sokoban
             this.Controls.Add(newButton);
         }
 
+        /// <summary>
+        /// Creates a move button for moving the player.
+        /// </summary>
+        /// <param name="text">The text to display on the button.</param>
+        /// <param name="x">The x position.</param>
+        /// <param name="y">The y position.</param>
+        /// <param name="myClick">What happens when the button is clicked.</param>
         protected void CreateMoveButton(string text, int x, int y, EventHandler myClick)
         {
             Button newButton = new Button();
@@ -190,6 +251,12 @@ namespace Sokoban
             this.Controls.Add(newButton);
         }
 
+        /// <summary>
+        /// Creates a control button.
+        /// </summary>
+        /// <param name="text">The text to display on the button.</param>
+        /// <param name="y">The y position.</param>
+        /// <param name="myClick">What happens when the button is clicked.</param>
         protected void CreateControlButton(string text, int y, EventHandler myClick)
         {
             Point p = new Point(LEVELMARGIN, GetControlButtonY(y));
@@ -203,11 +270,20 @@ namespace Sokoban
             this.Controls.Add(newButton);
         }
 
+        /// <summary>
+        /// Gets the control button y position.
+        /// </summary>
+        /// <param name="number">Which button this is for.</param>
+        /// <returns>The y position calculation</returns>
         protected int GetControlButtonY(int number)
         {
             return LEVELMARGIN + number * (CTRLBTNHEIGHT + CTRLBTNSPACEBTWN);
         }
 
+        /// <summary>
+        /// Gets the selected radio button.
+        /// </summary>
+        /// <returns>Selected radio button</returns>
         protected RadioButton GetSelectedRB()
         {
             foreach (RadioButton rb in partsSelector)
@@ -220,6 +296,9 @@ namespace Sokoban
             return null;
         }
 
+        /// <summary>
+        /// Makes the level design radio button control.
+        /// </summary>
         protected void MakeLevelDesignRadioPartControl()
         {
             partsSelector = new RadioButton[7]; //empty, wall, player, playergoal, goal, block, blockgoal
@@ -233,6 +312,13 @@ namespace Sokoban
             partsSelector[0].Checked = true;
         }
 
+        /// <summary>
+        /// Makes a level design RadioButton.
+        /// </summary>
+        /// <param name="imagePart">The image part.</param>
+        /// <param name="part">The part.</param>
+        /// <param name="x">The number in the row the button </param>
+        /// <returns>The Radio Button</returns>
         protected RadioButton MakeLevelDesignRadioButton(Image imagePart, Parts part, int x)
         {
             RadioButton newRB = new RadioButton();
@@ -245,7 +331,13 @@ namespace Sokoban
             return newRB;
         }
 
-        //Button Clicks
+        //Button Clicks        
+        /// <summary>
+        /// Changes a level grid button to the image selected by the radio button.
+        /// Passes this change to the controller.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void levelGrid_buttonClick(object sender, System.EventArgs e)
         {
             //Update button
@@ -257,58 +349,112 @@ namespace Sokoban
             Ctrl.DesignerSetPartAt(int.Parse(row_col[0]), int.Parse(row_col[1]), (Parts)char.Parse(rb.Name));
         }
 
+        /// <summary>
+        /// Opens a new level in the designer button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void levelDesignerNew_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.OpenDesignerNew();
         }
 
+        /// <summary>
+        /// Closes the designer button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void levelDesignerClose_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.CloseDesigner();
         }
 
+        /// <summary>
+        /// Loads a saved level into the designer button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void levelDesignerLoad_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.LoadLevel(Ctrl.Design_ST);
         }
 
+        /// <summary>
+        /// Saves the level in the designer button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void levelDesignerSave_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.SaveLevelDesigner();
         }
 
+        /// <summary>
+        /// Loads a level into game, starts a new game of that level button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void gameLoad_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.LoadLevel(Ctrl.Game_ST);
         }
 
+        /// <summary>
+        /// Restarts the currently loaded level in game button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void restartGame_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.NewGame();
         }
 
+        /// <summary>
+        /// Loads a state saved for the currently loaded level button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void gameLoadState_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.LoadGameState();
         }
 
+        /// <summary>
+        /// Saves the current game to a state button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void gameSaveState_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.SaveGameState();
         }
 
+        /// <summary>
+        /// Closes the game back to main menu button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void gameClose_buttonClick(object sender, System.EventArgs e)
         {
             this.KeyPress -= FormMain_KeyPress;
             Ctrl.CloseGame();
         }
 
+        /// <summary>
+        /// Key press to move player in game button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="KeyPressEventArgs"/> instance containing the event data.</param>
         private void FormMain_KeyPress(object sender, KeyPressEventArgs e)
         {
             //MoveFromKey((Keys)e.KeyChar);
             MoveFromKey(char.ToUpper((char)e.KeyChar));
         }
 
+        /// <summary>
+        /// Switches the key to the move direction.
+        /// </summary>
+        /// <param name="k">The k.</param>
         protected void MoveFromKey(char k)
         {
             if (k == 'W')
@@ -328,7 +474,8 @@ namespace Sokoban
                 Ctrl.Move(Direction.Right);
             }
         }
-
+        
+        // Move buttons
         protected void moveUp_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.Move(Direction.Up);
@@ -349,9 +496,24 @@ namespace Sokoban
             Ctrl.Move(Direction.Right);
         }
 
+        /// <summary>
+        /// Undo button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void undo_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.Undo();
+        }
+
+        /// <summary>
+        /// Check level for designer button handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        protected void checkDesignerLevel_buttonClick(object sender, System.EventArgs e)
+        {
+            Ctrl.CheckDesignerLevel();
         }
     }
 }

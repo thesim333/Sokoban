@@ -4,7 +4,7 @@ using Designer;
 using System.Xml;
 using System.Xml.Linq;
 using System.Linq;
-using GameNS;
+using GameGlobals;
 using System.Collections.Generic;
 
 namespace Filer
@@ -31,11 +31,21 @@ namespace Filer
             Convert = c;
         }
 
+        /// <summary>
+        /// Levels the exists as a saved file.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <returns></returns>
         public bool LevelExists(string fileName)
         {
             return File.Exists(AddDirExt(fileName));
         }
 
+        /// <summary>
+        /// Loads the grid from the file.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <returns></returns>
         public string LoadGrid(string fileName) 
         {
             XDocument xml = XDocument.Load(AddDirExt(fileName));
@@ -44,6 +54,12 @@ namespace Filer
             return Convert.Expand(query.FirstOrDefault());
         }
 
+        /// <summary>
+        /// Creates a new save file with the level from designer.
+        /// The level is saved in compressed string format.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <param name="filable">The level designer to save from.</param>
         public void Save(string fileName, IDesign filable)
         {
             XmlTextWriter writer = new XmlTextWriter(AddDirExt(fileName), null);
@@ -62,6 +78,11 @@ namespace Filer
             writer.Close();            
         }
 
+        /// <summary>
+        /// Makes the level string from the designer.
+        /// </summary>
+        /// <param name="filable">The filable.</param>
+        /// <returns>The string representing the level</returns>
         protected string MakeLvlString(IDesign filable)
         {
             int rows = filable.GetRowCount();
@@ -80,6 +101,10 @@ namespace Filer
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Gets all levels.
+        /// </summary>
+        /// <returns>Array containing all the levels from the /levels/</returns>
         public string[] GetAllLevels()
         {
             string[] theFiles = Directory.GetFiles(DIR, "*" + EXTENSION);
@@ -93,6 +118,12 @@ namespace Filer
             return theFiles;
         }
 
+        /// <summary>
+        /// Appends the state to the file.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <param name="stateName">Name of the state.</param>
+        /// <param name="theState">The state.</param>
         public void AppendState(string fileName, string stateName, State theState)
         {
             List<Position> blocks = theState.Blocks;
@@ -108,6 +139,11 @@ namespace Filer
             xml.Save(AddDirExt(fileName));
         }
 
+        /// <summary>
+        /// Makes a string of block positions from the state.
+        /// </summary>
+        /// <param name="blocks">The block positions list.</param>
+        /// <returns>string to save in state</returns>
         protected string MakeBlocksString(List<Position> blocks)
         {
             StringBuilder sb = new StringBuilder();
@@ -121,11 +157,21 @@ namespace Filer
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Adds the directory and extension to the file name.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <returns>File name ready to use</returns>
         protected string AddDirExt(string fileName)
         {
             return DIR + fileName + EXTENSION;
         }
 
+        /// <summary>
+        /// Gets all states in the level file.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <returns>Array of state names</returns>
         public string[] GetAllStates(string fileName)
         {
             XDocument xml = XDocument.Load(AddDirExt(fileName));
@@ -134,6 +180,12 @@ namespace Filer
             return query.ToArray();
         }
 
+        /// <summary>
+        /// Loads the state as a State Object.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <param name="stateName">Name of the state.</param>
+        /// <returns>State</returns>
         public State LoadState(string fileName, string stateName)
         {
             XDocument xml = XDocument.Load(AddDirExt(fileName));
@@ -152,6 +204,12 @@ namespace Filer
             
         }
 
+        /// <summary>
+        /// Does the state exist.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <param name="stateName">Name of the state.</param>
+        /// <returns><c>true</c> if the state exists in the file; otherwise, <c>false</c></returns>
         public bool StateExists(string fileName, string stateName)
         {
             XDocument xml = XDocument.Load(AddDirExt(fileName));
@@ -161,6 +219,12 @@ namespace Filer
             return (query.Count() > 0);
         }
 
+        /// <summary>
+        /// Overwrites an existing state.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <param name="stateName">Name of the state.</param>
+        /// <param name="theState">The state.</param>
         public void ReplaceState(string fileName, string stateName, State theState)
         {
             XDocument xml = XDocument.Load(AddDirExt(fileName));
@@ -174,6 +238,12 @@ namespace Filer
             xml.Save(AddDirExt(fileName));
         }
 
+        /// <summary>
+        /// Appends the user's name and move count from a won game.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <param name="playerName">Name of the player.</param>
+        /// <param name="moves">The moves.</param>
         public void AppendStat(string fileName, string playerName, int moves)
         {
             XDocument xml = XDocument.Load(AddDirExt(fileName));
@@ -185,6 +255,11 @@ namespace Filer
             xml.Save(AddDirExt(fileName));
         }
 
+        /// <summary>
+        /// Deletes the state from the file.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <param name="stateName">Name of the state.</param>
         public void DeleteState(string fileName, string stateName)
         {
             XDocument xml = XDocument.Load(AddDirExt(fileName));
@@ -195,6 +270,12 @@ namespace Filer
             xml.Save(AddDirExt(fileName));
         }
 
+        /// <summary>
+        /// Gets the best x won game stats.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <param name="x">The x.</param>
+        /// <returns>Array of x Stat objects</returns>
         public Stat[] GetBestX_Stats(string fileName, int x)
         {
             List<Stat> statList = new List<Stat>();

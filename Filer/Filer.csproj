@@ -44,7 +44,6 @@
     <Compile Include="IConverter.cs" />
     <Compile Include="IFiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Stat.cs" />
     <Compile Include="TheFiler.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -52,9 +51,9 @@
       <Project>{8edaccdc-4183-4ca0-b731-711ce41fe335}</Project>
       <Name>Designer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Game\Game.csproj">
-      <Project>{ab6147c4-2eda-4e90-9018-ae68b23cd9c5}</Project>
-      <Name>Game</Name>
+    <ProjectReference Include="..\GameGlobals\GameGlobals.csproj">
+      <Project>{2784d572-09c1-4224-ac5f-23744c0f6ea7}</Project>
+      <Name>GameGlobals</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

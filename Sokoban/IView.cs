@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Designer;
+﻿using GameGlobals;
 
 namespace Sokoban
 {
@@ -16,7 +11,6 @@ namespace Sokoban
         void GameSetup(int moves);
         void SetMoves(int moves);
         void SetGamePosition(int row, int col, Parts part);
-        void FinishGame();
-        void ReestablishKeys();
+        void FinishGame(int moves);
     }
 }
