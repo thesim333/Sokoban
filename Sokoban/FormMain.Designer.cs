@@ -34,8 +34,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(595, 501);
+            this.ClientSize = new System.Drawing.Size(934, 821);
+            this.MaximizeBox = false;
             this.Name = "FormMain";
             this.Text = "Sokoban";
             this.Shown += new System.EventHandler(this.FormMain_Shown);

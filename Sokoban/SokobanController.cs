@@ -2,7 +2,6 @@
 using Filer;
 using GameNS;
 using Designer;
-using System.Windows.Forms;
 using GameGlobals;
 
 namespace Sokoban
@@ -13,7 +12,8 @@ namespace Sokoban
         protected IView View;
         protected IDesign Designer;
         protected IFiler Filer;
-        protected IChecker Check;
+        protected IGridChecker GridCheck;
+        protected IFileChecker FileCheck;
         private const string GAME_STRING = "Game";
         private const string DESIGN_STRING = "Design";
 
@@ -41,13 +41,15 @@ namespace Sokoban
         /// <param name="design">The designer object.</param>
         /// <param name="filer">The filer object.</param>
         /// <param name="check">The checker object.</param>
-        public SokobanController(IGame game, IView view, IDesign design, IFiler filer, IChecker check)
+        public SokobanController(IGame game, IView view, IDesign design, IFiler filer, IGridChecker gridCheck, IFileChecker fileCheck)
         {
             Game = game;
             View = view;
             Designer = design;
             Filer = filer;
-            Check = check;
+            GridCheck = gridCheck;
+            FileCheck = fileCheck;
+            Filer.InsertApplicationPath(System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, @"levels\"));
         }
 
         /// <summary>
@@ -92,7 +94,7 @@ namespace Sokoban
                 edge = "?";
             }
 
-            MessageBox.Show("Correct amount of players: " + players + "\n" +
+            View.Display("Correct amount of players: " + players + "\n" +
                 "Blocks and Targets are equal: " + blocks + "\n" +
                 "Player cannot reach the edge: " + edge);
         }
@@ -104,8 +106,8 @@ namespace Sokoban
         /// <returns><c>true</c> if the player cannot reach the edge; otherwise <c>false</c></returns>
         protected bool CheckLevelPlayerEdge()
         {
-            Check.InsertDesigner(Designer);
-            return Check.PlayerCannotReachEdge();
+            GridCheck.InsertDesigner(Designer);
+            return GridCheck.PlayerCannotReachEdge();
         }
 
         /// <summary>
@@ -116,10 +118,9 @@ namespace Sokoban
         /// </summary>
         protected void FinishGame()
         {
-            string player = GetPlayerName();
-            string fileName = Game.GetName();
+            string player = View.GetInput("Player Name:");
             int thisScore = Game.GetMoveCount();
-            Filer.AppendStat(fileName, player, thisScore);
+            Filer.AppendStat(player, thisScore);
             View.FinishGame(Game.GetMoveCount());
             DisplayBestScores();
         }
@@ -129,7 +130,7 @@ namespace Sokoban
         /// </summary>
         protected void DisplayBestScores()
         {
-            Stat[] scores = Filer.GetBestX_Stats(Game.GetName(), 10);
+            Stat[] scores = Filer.GetBestX_Stats(10);
             StringBuilder display = new StringBuilder();
 
             for (int i = 0; i < scores.Length; i++)
@@ -142,29 +143,16 @@ namespace Sokoban
                 display.Append("\n");
             }
 
-            MessageBox.Show(display.ToString(), "Best Scores");
+            View.Display(display.ToString());
         }
-
-        /// <summary>
-        /// Gets the name of the player from user input.
-        /// </summary>
-        /// <returns>The name</returns>
-        protected string GetPlayerName()
-        {
-            FileSaveNameDialog sn = new FileSaveNameDialog();
-            sn.SetLabel("Your name:");
-            sn.ShowDialog();
-            return sn.GetName();
-        }
-
+        
         /// <summary>
         /// Plays the level.
         /// </summary>
-        /// <param name="fileName">Name of the file.</param>
         /// <param name="level">The level grid as string.</param>
-        protected void PlayLevel(string fileName, string level)
+        protected void PlayLevel(string level)
         {
-            Game.Load(fileName, level);
+            Game.Load(level);
             NewGame();
         }
 
@@ -174,24 +162,25 @@ namespace Sokoban
         /// <param name="which">Which object to load the level for Designer or Game</param>
         public void LoadLevel(string which)
         {
-            LoadFileFromListDialog levDia = new LoadFileFromListDialog();
-            levDia.InsertLevels(Filer.GetAllLevels());
-
-            if (levDia.ShowDialog() == DialogResult.OK)
+            string filePath = View.GetFileToLoad(Filer.GetCurrentPath());
+            if (FileCheck.FileChecksOut(filePath))
             {
-                string fileName = levDia.GetSelected();
-                string grid = Filer.LoadGrid(fileName);
+                string grid = Filer.LoadGrid(filePath);
+
                 switch (which)
                 {
                     case GAME_STRING:
-                        PlayLevel(fileName, grid);
+                        PlayLevel(grid);
                         break;
                     case DESIGN_STRING:
-                        OpenDesignerLoad(fileName, grid);
+                        OpenDesignerLoad(grid);
                         break;
                 }
             }
-            levDia.Dispose();
+            else
+            {
+                View.Display("There is a problem with that file.");
+            }
         }
 
         /// <summary>
@@ -208,7 +197,7 @@ namespace Sokoban
         /// </summary>
         protected void CreateGameView()
         {
-            View.GameSetup(Game.GetMoveCount());
+            View.GameSetup(Game.GetMoveCount(), Game.GetCols(), Game.GetRows());
             int rows = Game.GetRows();
             int cols = Game.GetCols();
             for (int r = 0; r < rows; r++)
@@ -225,15 +214,12 @@ namespace Sokoban
         /// </summary>
         public void LoadGameState()
         {
-            string fileName = Game.GetName();
-            string[] states = Filer.GetAllStates(fileName);
-            LoadFileFromListDialog levDia = new LoadFileFromListDialog();
-            levDia.SetText("Stats for " + Game.GetName());
-            levDia.InsertLevels(states);
+            string[] states = Filer.GetAllStates();
+            string theState = View.GetSelectedState(states);            
 
-            if (states.Length > 0 && levDia.ShowDialog() == DialogResult.OK)
+            if (theState.Length > 0)
             {
-                Game.LoadState(Filer.LoadState(fileName, levDia.GetSelected()));
+                Game.LoadState(Filer.LoadState(theState));
                 CreateGameView();
             }
         }
@@ -257,9 +243,9 @@ namespace Sokoban
         /// </summary>
         /// <param name="fileName">Name of the file.</param>
         /// <param name="level">The level grid as string.</param>
-        protected void OpenDesignerLoad(string fileName, string level)
+        protected void OpenDesignerLoad(string level)
         {
-            Designer.LoadLevel(fileName, level);
+            Designer.LoadLevel(level);
             int rows = Designer.GetRowCount();
             int cols = Designer.GetColumnCount();
             View.DesignerLoadLevel();
@@ -278,15 +264,9 @@ namespace Sokoban
         /// </summary>
         public void OpenDesignerNew()
         {
-            SizeDialog sd = new SizeDialog();
-
-            if (sd.ShowDialog() == DialogResult.OK)
-            {
-                Designer.NewLevel(sd.GetRows(), sd.GetCols());
-                View.DesignerNewLevel(sd.GetRows(), sd.GetCols());
-            }
-
-            sd.Dispose();
+            int[] myRowCol = View.GetLevelSize();
+            Designer.NewLevel(myRowCol[0], myRowCol[1]);
+            View.DesignerNewLevel(myRowCol[0], myRowCol[1]);
         }
 
         /// <summary>
@@ -325,13 +305,14 @@ namespace Sokoban
 
         /// <summary>
         /// Saves the level in designer.
+        /// If the level can't be saved displays warning message.
         /// </summary>
         public void SaveLevelDesigner()
         {
             if (SaveLevelInDesigner())
             {
                 Designer.SetSaved();
-            }
+            } 
         }
 
         /// <summary>
@@ -342,151 +323,79 @@ namespace Sokoban
         /// </returns>
         protected bool CanExitDesignerWithUnsavedChanges()
         {
-            DialogResult result = MessageBox.Show("Do you wish to save before closing?", "Level has unsaved changes", MessageBoxButtons.YesNoCancel);
-
-            if (result == DialogResult.Yes)
+            string result = View.GetUserResponse("Do you wish to save before closing?", "Level has unsaved changes");
+            if (result == "Y")
             {
                 return SaveLevelInDesigner();
             }
-            else if (result == DialogResult.Cancel)
+            else if (result == "N")
             {
                 return false;
             }
-
             return true;
         }
 
         /// <summary>
         /// Checks if the level is legal.
-        /// If legal, gets the name from the user and attempts to save.
+        /// If legal, gets the name from the View and attempts to save.
         /// </summary>
         /// <returns></returns>
         protected bool SaveLevelInDesigner()
         {
             if (!Designer.HasOnePlayer())
             {
-                MessageBox.Show("Level must have one player");
+                View.Display("Level must have one player");
                 return false;
             }
 
             if (!Designer.BlocksEqualTargets())
             {
-                MessageBox.Show("Blocks and Targets must be equal");
+                View.Display("Blocks and Targets must be equal");
                 return false;
             }
 
             if (!CheckLevelPlayerEdge())
             {
-                MessageBox.Show("Player must not be able to reach the edge");
+                View.Display("Player must not be able to reach the edge");
                 return false;
             }
 
             bool returnMe = false;
-            FileSaveNameDialog sn = new FileSaveNameDialog();
-            sn.SetName(Designer.GetName());
+            string fileNamePath = View.SaveMyFile(Filer.GetCurrentPath());
 
-            while (true)
+            if (fileNamePath.Length > 0) 
             {
-                if (sn.ShowDialog() == DialogResult.OK) 
-                {
-                    string toFileName = sn.GetName();
-                    //if file doesn't exist or it's ok to overwrite
-                    if (CanSaveLevel(toFileName))  
-                    {
-                        Filer.Save(toFileName, Designer);
-                        Designer.SetSaved();
-                        Designer.SetName(toFileName);
-                        returnMe = true;
-                        MessageBox.Show("Level " + sn.GetName() + " saved successfully.");
-                        break;
-                    }
-                }
-                else
-                {
-                    break;
-                }
+                string fileName = Filer.Save(fileNamePath, Designer);
+                Designer.SetSaved();
+                returnMe = true;
+                View.Display("Level " + fileName + " saved successfully.");
             }
-            sn.Dispose();
+                
             return returnMe;
         }
-
-        /// <summary>
-        /// Attempts to save the level as [fileName]. If the level exists, ask to overwrite.
-        /// </summary>
-        /// <param name="fileName">Name to save the file as.</param>
-        /// <returns>
-        ///   <c>true</c> If the level saves; otherwise, if the user does not wish to overwrite an existing level, <c>false</c>.
-        /// </returns>
-        protected bool CanSaveLevel(string fileName)
-        {
-            if (!Filer.LevelExists(fileName))
-            {
-                return true;
-            }
-            else if (MessageBox.Show("Overwite Level?", "Level file already exists.", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
+        
         /// <summary>
         /// Saves the state of the game.
         /// </summary>
         public void SaveGameState()
         {
-            FileSaveNameDialog sn = new FileSaveNameDialog();
-            sn.SetLabel("Name for state:");
-
             while (true)
             {
-                if (sn.ShowDialog() == DialogResult.OK)
+                string state = View.GetInput("Name for State:");
+                bool stateExists = Filer.StateExists(state);
+                if (stateExists && View.GetUserResponse("OK to overwrite existing state: " + state, "State Exists") == "Y")
                 {
-                    if (DidSaveState(sn.GetName()))
-                    {
-                        break;
-                    }
+                    Filer.ReplaceState(state, Game.MakeState());
+                    View.Display("State " + state + " saved");
+                    break;
                 }
-                else
+                else if (!stateExists)
                 {
+                    Filer.AppendState(state, Game.MakeState());
+                    View.Display("State " + state + " saved");
                     break;
                 }
             }
-        }
-
-        /// <summary>
-        /// Attempts to save the state in the level file as [stateName].
-        /// If the state exists, ask to overwrite.
-        /// </summary>
-        /// <param name="stateName">Name of the state.</param>
-        /// <returns>
-        ///   <c>true</c> If the state saves; otherwise, if the user does not wish to overwrite an existing state, <c>false</c>
-        /// </returns>
-        protected bool DidSaveState(string stateName)
-        {
-            State state = Game.MakeState();
-            string fileName = Game.GetName();
-
-            if (Filer.StateExists(fileName, stateName))
-            {
-                if (MessageBox.Show("This state exists, ok to replace?", "Replace?", MessageBoxButtons.YesNo) == DialogResult.No)
-                {
-                    return false;
-                }
-                else
-                {
-                    Filer.ReplaceState(fileName, stateName, state);
-                }
-            }
-            else
-            {
-                Filer.AppendState(fileName, stateName, state);
-            }
-
-            return true;
         }
     }
 }

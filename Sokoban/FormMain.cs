@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using GameGlobals;
+using System.IO;
 
 namespace Sokoban
 {
@@ -21,6 +22,8 @@ namespace Sokoban
         protected const int LEVELDESIGNLEFTMARGIN = LEVELMARGIN * 2 + CTRLBTNWIDTH;
         protected ImageHandler IH;
         protected RadioButton[] partsSelector;
+        protected int Rows;
+        protected int Cols;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FormMain"/> class as an IView.
@@ -30,7 +33,6 @@ namespace Sokoban
             InitializeComponent();
             MyGraphics = this.CreateGraphics();
             IH = new ImageHandler();
-            this.AutoSize = true;
             MakeLevelDesignRadioPartControl();
         }
 
@@ -60,6 +62,9 @@ namespace Sokoban
         {
             this.Controls.Clear();
             MyGraphics.Clear(Color.White);
+            AutoSize = false;
+            Width = LEVELMARGIN * 2 + SQUARESIDESIZE * 20 + CTRLBTNWIDTH + 30;
+            Height = LEVELMARGIN * 2 + SQUARESIDESIZE * 20 + 40;
         }
 
         /// <summary>
@@ -84,6 +89,7 @@ namespace Sokoban
                 this.Controls.Add(partsSelector[i]);
             }
             DesignerButtons();
+            AutoSize = true;
         }
 
         /// <summary>
@@ -124,30 +130,29 @@ namespace Sokoban
         /// Setup the view for the game
         /// </summary>
         /// <param name="moves">The moves from the game to display</param>
-        public void GameSetup(int moves)
+        public void GameSetup(int moves, int rows, int cols)
         {
             ResetForm();
             GameButtons();
             MakeMoveLabel();
             SetMoves(moves);
-            CreateMoveButton("W", 33, 360, moveUp_buttonClick);
-            CreateMoveButton("A", 10, 402, moveLeft_buttonClick);
-            CreateMoveButton("S", 33, 444, moveDown_buttonClick);
-            CreateMoveButton("D", 56, 402, moveRight_buttonClick);
-            this.KeyPress -= FormMain_KeyPress;
-            this.KeyPress += FormMain_KeyPress;
+            MakeMoveButtons();
+            Rows = rows;
+            Cols = cols;
         }
 
         /// <summary>
         /// Draws a game position with the image representing the part from that position in the game.
+        /// Draws up to a 20 x 20 grid.
+        /// Centers the grid in the game space.
         /// </summary>
         /// <param name="row">The row.</param>
         /// <param name="col">The col.</param>
         /// <param name="part">The part.</param>
         public void SetGamePosition(int row, int col, Parts part)
         {
-            int rectCol = LEVELMARGIN + 10 + CTRLBTNWIDTH + SQUARESIDESIZE * col; //10 is the space between buttons and the grid
-            int rectRow = LEVELMARGIN + SQUARESIDESIZE * row;
+            int rectCol = LEVELMARGIN + 10 + CTRLBTNWIDTH + SQUARESIDESIZE * col + ((20 - Cols) / 2) * SQUARESIDESIZE ; //10 is the space between buttons and the grid
+            int rectRow = LEVELMARGIN + SQUARESIDESIZE * row + ((20 - Rows) / 2) * SQUARESIDESIZE;
             MyGraphics.DrawRectangle(Pens.Black, new Rectangle(rectCol, rectRow, SQUARESIDESIZE, SQUARESIDESIZE));
             Rectangle inner = new Rectangle(rectCol + 1, rectRow + 1, IMAGESIZE, IMAGESIZE);
             MyGraphics.FillRectangle(Brushes.LightGray, inner);
@@ -163,10 +168,20 @@ namespace Sokoban
         public void DisplayMain()
         {
             MyGraphics.Clear(Color.White);
-            Controls.Clear();
+            ResetForm();
             CreateControlButton("Game - Load Level", 0, gameLoad_buttonClick);
             CreateControlButton("Designer - New Level", 1, levelDesignerNew_buttonClick);
             CreateControlButton("Designer - Load Level", 2, levelDesignerLoad_buttonClick);
+            DisplayMainPic();
+        }
+
+        protected void DisplayMainPic()
+        {
+            PictureBox pb = new PictureBox();
+            pb.Image = IH.MainPic;
+            pb.Location = new Point(LEVELMARGIN + CTRLBTNWIDTH + 10, LEVELMARGIN);
+            pb.Size = new Size(155, 155);
+            this.Controls.Add(pb);
         }
 
         /// <summary>
@@ -205,6 +220,17 @@ namespace Sokoban
             CreateControlButton("Load New Level", 1, gameLoad_buttonClick);
             CreateControlButton("Load Game State", 2, gameLoadState_buttonClick);
             SetMoves(moves);
+        }
+
+        /// <summary>
+        /// Makes the move buttons.
+        /// </summary>
+        protected void MakeMoveButtons()
+        {
+            CreateMoveButton("U", 33, 360, moveUp_buttonClick);
+            CreateMoveButton("L", 10, 402, moveLeft_buttonClick);
+            CreateMoveButton("D", 33, 444, moveDown_buttonClick);
+            CreateMoveButton("R", 56, 402, moveRight_buttonClick);
         }
 
         /// <summary>
@@ -453,6 +479,7 @@ namespace Sokoban
 
         /// <summary>
         /// Switches the key to the move direction.
+        /// Passes the direction to controller.
         /// </summary>
         /// <param name="k">The k.</param>
         protected void MoveFromKey(char k)
@@ -514,6 +541,77 @@ namespace Sokoban
         protected void checkDesignerLevel_buttonClick(object sender, System.EventArgs e)
         {
             Ctrl.CheckDesignerLevel();
+        }
+
+        /// <summary>
+        /// Gets the name and path of the file to save.
+        /// </summary>
+        /// <param name="initialDir">The initial dir.</param>
+        /// <returns></returns>
+        public string SaveMyFile(string initialDir)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "level files (*.lvl)|*.lvl";
+            sfd.Title = "Save This Level";
+            sfd.DefaultExt = "lvl";
+            sfd.InitialDirectory = (initialDir == string.Empty) ? Path.Combine(Application.StartupPath, @"levels\") : initialDir;
+            sfd.ShowDialog();
+            return sfd.FileName;
+        }
+
+        public void Display(string message)
+        {
+            MessageBox.Show(message);
+        }
+
+        public string GetInput(string message)
+        {
+            InputForm inForm = new InputForm();
+            inForm.SetLabel(message);
+            inForm.ShowDialog();
+            return inForm.GetResult();
+        }
+
+        public int[] GetLevelSize()
+        {
+            SizeDialog sd = new SizeDialog();
+            sd.ShowDialog();
+            return new int[] { sd.GetRows(), sd.GetCols() };
+        }
+
+        public string GetUserResponse(string message, string caption)
+        {
+            switch (MessageBox.Show(message, caption, MessageBoxButtons.YesNoCancel))
+            {
+                case DialogResult.Yes:
+                    return "Y";
+                case DialogResult.No:
+                    return "N";
+                default:
+                    return "C";
+            }
+        }
+
+        public string GetFileToLoad(string initialDir)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = initialDir;
+            ofd.Multiselect = false;
+            ofd.Filter = "level files (*.lvl)|*.lvl";
+            ofd.Title = "Select Level To Load";
+            ofd.ShowDialog();
+            return ofd.FileName;
+        }
+
+        public string GetSelectedState(string[] states)
+        {
+            StateLoadDialog sld = new StateLoadDialog();
+            sld.InsertStates(states);
+            if (sld.ShowDialog() == DialogResult.OK)
+            {
+                return sld.GetSelected();
+            }
+            return string.Empty;
         }
     }
 }

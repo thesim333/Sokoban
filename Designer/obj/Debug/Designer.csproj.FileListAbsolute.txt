@@ -10,3 +10,5 @@ C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Designer\b
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Designer\obj\Debug\Designer.dll
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Designer\obj\Debug\Designer.pdb
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Designer\obj\Debug\Designer.csprojResolveAssemblyReference.cache
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Designer\bin\Debug\GameGlobals.dll
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Designer\bin\Debug\GameGlobals.pdb

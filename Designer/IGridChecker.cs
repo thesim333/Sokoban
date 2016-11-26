@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Designer
 {
-    public interface IChecker
+    public interface IGridChecker
     {
         bool PlayerCannotReachEdge();
         void InsertDesigner(IDesign des);

@@ -17,8 +17,6 @@ C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\bin\D
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\obj\Debug\Game.csprojResolveAssemblyReference.cache
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\obj\Debug\Game.dll
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\obj\Debug\Game.pdb
-C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\bin\Debug\Designer.dll
-C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\bin\Debug\Designer.pdb
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Game\bin\Debug\Game.dll
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Game\bin\Debug\Game.pdb
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Game\bin\Debug\Designer.dll
@@ -28,3 +26,5 @@ C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Game\bin\D
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Game\obj\Debug\Game.csprojResolveAssemblyReference.cache
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Game\obj\Debug\Game.dll
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Game\obj\Debug\Game.pdb
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\bin\Debug\GameGlobals.dll
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Game\bin\Debug\GameGlobals.pdb

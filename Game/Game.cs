@@ -6,7 +6,6 @@ namespace GameNS
 {
     public class Game : IGame
     {
-        protected string LevelName; //for file manipulations (state and stats)
         protected string LevelString;
         protected Parts[,] LevelGrid;
         protected int MoveCount;
@@ -48,9 +47,8 @@ namespace GameNS
         /// </summary>
         /// <param name="name">The name of the level.</param>
         /// <param name="newLevel">The new level as a string.</param>
-        public void Load(string name, string newLevel)
+        public void Load(string newLevel)
         {
-            LevelName = name;
             LevelString = newLevel;
         }
 
@@ -391,15 +389,6 @@ namespace GameNS
         public Parts GetPartAt(int row, int col)
         {
             return LevelGrid[row, col];
-        }
-
-        /// <summary>
-        /// Gets the name of the level.
-        /// </summary>
-        /// <returns></returns>
-        public string GetName()
-        {
-            return LevelName;
         }
 
         /// <summary>

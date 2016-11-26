@@ -1,6 +1,6 @@
 ﻿namespace Sokoban
 {
-    partial class FileSaveNameDialog
+    partial class InputForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,64 +28,50 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
-            this.lblNameThing = new System.Windows.Forms.Label();
             this.txtBoxName = new System.Windows.Forms.TextBox();
+            this.lblWhat = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(220, 116);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 0;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             // 
             // btnOK
             // 
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Enabled = false;
-            this.btnOK.Location = new System.Drawing.Point(139, 118);
+            this.btnOK.Location = new System.Drawing.Point(236, 134);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 21);
-            this.btnOK.TabIndex = 1;
+            this.btnOK.Size = new System.Drawing.Size(75, 23);
+            this.btnOK.TabIndex = 0;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             // 
-            // lblNameThing
-            // 
-            this.lblNameThing.AutoSize = true;
-            this.lblNameThing.Location = new System.Drawing.Point(29, 61);
-            this.lblNameThing.Name = "lblNameThing";
-            this.lblNameThing.Size = new System.Drawing.Size(67, 13);
-            this.lblNameThing.TabIndex = 2;
-            this.lblNameThing.Text = "Level Name:";
-            // 
             // txtBoxName
             // 
-            this.txtBoxName.Location = new System.Drawing.Point(102, 58);
+            this.txtBoxName.Location = new System.Drawing.Point(48, 65);
             this.txtBoxName.Name = "txtBoxName";
-            this.txtBoxName.Size = new System.Drawing.Size(193, 20);
-            this.txtBoxName.TabIndex = 3;
+            this.txtBoxName.Size = new System.Drawing.Size(207, 20);
+            this.txtBoxName.TabIndex = 1;
             this.txtBoxName.TextChanged += new System.EventHandler(this.txtBoxName_TextChanged);
-            this.txtBoxName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtBoxName_KeyPress);
             // 
-            // FileSaveNameDialog
+            // lblWhat
+            // 
+            this.lblWhat.AutoSize = true;
+            this.lblWhat.Location = new System.Drawing.Point(45, 37);
+            this.lblWhat.Name = "lblWhat";
+            this.lblWhat.Size = new System.Drawing.Size(0, 13);
+            this.lblWhat.TabIndex = 2;
+            // 
+            // InputForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 151);
+            this.ClientSize = new System.Drawing.Size(323, 169);
             this.ControlBox = false;
+            this.Controls.Add(this.lblWhat);
             this.Controls.Add(this.txtBoxName);
-            this.Controls.Add(this.lblNameThing);
             this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.btnCancel);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FileSaveNameDialog";
+            this.Name = "InputForm";
             this.ShowInTaskbar = false;
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -94,9 +80,8 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.Label lblNameThing;
         private System.Windows.Forms.TextBox txtBoxName;
+        private System.Windows.Forms.Label lblWhat;
     }
 }

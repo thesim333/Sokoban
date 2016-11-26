@@ -5,27 +5,8 @@ namespace Designer
     public class Design : IDesign
     {
         protected Parts[,] LevelGrid;
-        protected string Name;
         protected bool UnSavedChanges = false;
-
-        /// <summary>
-        /// Gets the name of the level from when this level is loaded or saved.
-        /// </summary>
-        /// <returns></returns>
-        public string GetName()
-        {
-            return Name;
-        }
-
-        /// <summary>
-        /// Sets the name of the level.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        public void SetName(string name)
-        {
-            Name = name;
-        }
-
+        
         /// <summary>
         /// Used after the level is saved to register that there are no unsaved changes.
         /// </summary>
@@ -70,9 +51,8 @@ namespace Designer
         /// </summary>
         /// <param name="name">The level name.</param>
         /// <param name="level">The contents of the level grid as a string.</param>
-        public void LoadLevel(string name, string level)
+        public void LoadLevel(string level)
         {
-            Name = name;
             string[] rowStrings = level.Split(',');
             int rows = rowStrings.Length;
             int cols = rowStrings[0].Length;

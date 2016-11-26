@@ -22,5 +22,5 @@ C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Filer\bin\
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Filer\obj\Debug\Filer.csprojResolveAssemblyReference.cache
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Filer\obj\Debug\Filer.dll
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Filer\obj\Debug\Filer.pdb
-C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Filer\bin\Debug\Game.dll
-C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Filer\bin\Debug\Game.pdb
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Filer\bin\Debug\GameGlobals.dll
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Filer\bin\Debug\GameGlobals.pdb

@@ -40,9 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Checker.cs" />
+    <Compile Include="GridChecker.cs" />
     <Compile Include="Design.cs" />
-    <Compile Include="IChecker.cs" />
+    <Compile Include="IGridChecker.cs" />
     <Compile Include="IDesign.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

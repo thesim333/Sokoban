@@ -46,12 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileSaveNameDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FileSaveNameDialog.Designer.cs">
-      <DependentUpon>FileSaveNameDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -59,13 +53,13 @@
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
     <Compile Include="ImageHandler.cs" />
-    <Compile Include="IView.cs" />
-    <Compile Include="LoadFileFromListDialog.cs">
+    <Compile Include="InputForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LoadFileFromListDialog.Designer.cs">
-      <DependentUpon>LoadFileFromListDialog.cs</DependentUpon>
+    <Compile Include="InputForm.Designer.cs">
+      <DependentUpon>InputForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="IView.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SizeDialog.cs">
@@ -75,14 +69,17 @@
       <DependentUpon>SizeDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="SokobanController.cs" />
-    <EmbeddedResource Include="FileSaveNameDialog.resx">
-      <DependentUpon>FileSaveNameDialog.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="StateLoadDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StateLoadDialog.Designer.cs">
+      <DependentUpon>StateLoadDialog.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LoadFileFromListDialog.resx">
-      <DependentUpon>LoadFileFromListDialog.cs</DependentUpon>
+    <EmbeddedResource Include="InputForm.resx">
+      <DependentUpon>InputForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -95,6 +92,9 @@
     </Compile>
     <EmbeddedResource Include="SizeDialog.resx">
       <DependentUpon>SizeDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StateLoadDialog.resx">
+      <DependentUpon>StateLoadDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -12,6 +12,7 @@ namespace Sokoban
         public readonly Image PlayerGoal = Image.FromFile("playertarget38.jpg");
         public readonly Image BlockGoal = Image.FromFile("blocktarget38.jpg");
         public readonly Image Empty = Image.FromFile("empty38.jpg");
+        public readonly Image MainPic = Image.FromFile("main.png");
 
         public Image GetMyPart(Parts part)
         {

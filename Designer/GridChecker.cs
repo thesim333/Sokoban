@@ -3,7 +3,7 @@ using GameGlobals;
 
 namespace Designer
 {
-    public class Checker : IChecker
+    public class GridChecker : IGridChecker
     {
         protected char[,] MyGrid;
         protected Position Player;
