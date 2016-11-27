@@ -1,5 +1,9 @@
 ﻿namespace GameGlobals
 {
+    /// <summary>
+    /// A Point like object for holding level grid position information.
+    /// [Row, Col]
+    /// </summary>
     public struct Position
     {
         private int _row;
@@ -33,6 +37,11 @@
             _col = col;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Position"/> struct.
+        /// xy string from file = row,col
+        /// </summary>
+        /// <param name="xy">The xy.</param>
         public Position(string xy)
         {
             string[] myXY = xy.Split(',');

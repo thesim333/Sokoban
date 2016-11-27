@@ -4,6 +4,10 @@ using GameGlobals;
 
 namespace GameNS
 {
+    /// <summary>
+    /// Game Model class
+    /// </summary>
+    /// <seealso cref="GameNS.IGame" />
     public class Game : IGame
     {
         protected string LevelString;
@@ -206,7 +210,7 @@ namespace GameNS
         {
             if (MovesMade.Count > 0)
             {
-                MoveCount++;
+                //MoveCount++;
                 Move theLast = MovesMade.Pop();
                 MoveToNewPosReplaceWithEmpty(theLast.GetPos2(), theLast.GetPlayerStart());
                 PlayerPos = theLast.GetPlayerStart();

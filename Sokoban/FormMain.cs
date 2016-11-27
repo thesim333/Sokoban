@@ -3,13 +3,18 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using GameGlobals;
-using System.IO;
 
 namespace Sokoban
 {
+    /// <summary>
+    /// Main View of the Sokoban application
+    /// Used in conjunction with an IController object
+    /// </summary>
+    /// <seealso cref="System.Windows.Forms.Form" />
+    /// <seealso cref="Sokoban.IView" />
     public partial class FormMain : Form, IView
     {
-        protected SokobanController Ctrl;
+        protected IController Ctrl;
         protected Graphics MyGraphics;
         protected const int SQUARESIDESIZE = 40;
         protected const int LEVELMARGIN = 10;
@@ -50,7 +55,7 @@ namespace Sokoban
         /// Adds the controller.
         /// </summary>
         /// <param name="ctrl">The controller.</param>
-        public void AddController(SokobanController ctrl)
+        public void AddController(IController ctrl)
         {
             Ctrl = ctrl;
         }
@@ -60,7 +65,7 @@ namespace Sokoban
         /// </summary>
         protected void ResetForm()
         {
-            this.Controls.Clear();
+            Controls.Clear();
             MyGraphics.Clear(Color.White);
             AutoSize = false;
             Width = LEVELMARGIN * 2 + SQUARESIDESIZE * 20 + CTRLBTNWIDTH + 30;
@@ -75,7 +80,9 @@ namespace Sokoban
         public void DesignerNewLevel(int rows, int cols)
         {
             ResetForm();
-            
+            Rows = rows;
+            Cols = cols;
+
             for (int r = 0; r < rows; r++)
             {
                 for (int c = 0; c < cols; c++)
@@ -84,21 +91,33 @@ namespace Sokoban
                 }
             }
 
-            for (int i = 0; i < partsSelector.Length; i++)
-            {
-                this.Controls.Add(partsSelector[i]);
-            }
+            DesignerRadioButtonDisplay();
             DesignerButtons();
             AutoSize = true;
         }
 
         /// <summary>
+        /// Displays the radio buttons for selection of the Parts in Designer.
+        /// </summary>
+        protected void DesignerRadioButtonDisplay()
+        {
+            for (int i = 0; i < partsSelector.Length; i++)
+            {
+                Controls.Add(partsSelector[i]);
+            }
+        }
+
+        /// <summary>
         /// Changes the view to the designer waiting for the level to be loaded from a file.
         /// </summary>
-        public void DesignerLoadLevel()
+        public void DesignerLoadLevel(int rows, int cols)
         {
             ResetForm();
+            DesignerRadioButtonDisplay();
             DesignerButtons();
+            Rows = rows;
+            Cols = cols;
+            AutoSize = true;
         }
 
         /// <summary>
@@ -121,9 +140,10 @@ namespace Sokoban
             CreateControlButton("Restart Game", 0, restartGame_buttonClick);
             CreateControlButton("Load New Level", 1, gameLoad_buttonClick);
             CreateControlButton("Load Game State", 2, gameLoadState_buttonClick);
-            CreateControlButton("Save Game State", 3, gameSaveState_buttonClick);
-            CreateControlButton("Close Game", 4, gameClose_buttonClick);
-            CreateControlButton("Undo", 5, undo_buttonClick);
+            CreateControlButton("Delete Game State", 3, GameDeleteState_buttonClick);
+            CreateControlButton("Save Game State", 4, gameSaveState_buttonClick);
+            CreateControlButton("Close Game", 5, gameClose_buttonClick);
+            CreateControlButton("Undo", 6, undo_buttonClick);
         }
 
         /// <summary>
@@ -181,7 +201,7 @@ namespace Sokoban
             pb.Image = IH.MainPic;
             pb.Location = new Point(LEVELMARGIN + CTRLBTNWIDTH + 10, LEVELMARGIN);
             pb.Size = new Size(155, 155);
-            this.Controls.Add(pb);
+            Controls.Add(pb);
         }
 
         /// <summary>
@@ -191,10 +211,10 @@ namespace Sokoban
         {
             Label moves = new Label();
             moves.Name = "lblMoves";
-            moves.Location = new Point(LEVELMARGIN, 337);
+            moves.Location = new Point(LEVELMARGIN, 397);
             moves.Font = new Font("Rockwell", 14);
             moves.ForeColor = Color.Black;
-            this.Controls.Add(moves);
+            Controls.Add(moves);
         }
 
         /// <summary>
@@ -203,7 +223,7 @@ namespace Sokoban
         /// <param name="moves">The moves.</param>
         public void SetMoves(int moves)
         {
-            Label lblMoves = this.Controls.Find("lblMoves", false).FirstOrDefault() as Label;
+            Label lblMoves = Controls.Find("lblMoves", false).FirstOrDefault() as Label;
             string x = "Moves:" + moves.ToString();
             lblMoves.Text = x;
         }
@@ -214,12 +234,23 @@ namespace Sokoban
         /// <param name="moves">The moves from the finish of the game.</param>
         public void FinishGame(int moves)
         {
-            this.KeyPress -= FormMain_KeyPress;
-            this.Controls.Clear();
+            //this.KeyPress -= FormMain_KeyPress;
+            Controls.Clear();
             CreateControlButton("Restart Game", 0, restartGame_buttonClick);
             CreateControlButton("Load New Level", 1, gameLoad_buttonClick);
             CreateControlButton("Load Game State", 2, gameLoadState_buttonClick);
+            CreateControlButton("Delete Game State", 3, GameDeleteState_buttonClick);
+            MakeMoveLabel();
             SetMoves(moves);
+            WriteGameWon();
+        }
+
+        /// <summary>
+        /// Writes game complete across top of grid area.
+        /// </summary>
+        protected void WriteGameWon()
+        {
+            MyGraphics.DrawString("Game Complete", new Font("Rockwell", 30), Brushes.Black, new Point(150, 15));
         }
 
         /// <summary>
@@ -227,10 +258,10 @@ namespace Sokoban
         /// </summary>
         protected void MakeMoveButtons()
         {
-            CreateMoveButton("U", 33, 360, moveUp_buttonClick);
-            CreateMoveButton("L", 10, 402, moveLeft_buttonClick);
-            CreateMoveButton("D", 33, 444, moveDown_buttonClick);
-            CreateMoveButton("R", 56, 402, moveRight_buttonClick);
+            CreateMoveButton("U", 33, 435, moveUp_buttonClick);
+            CreateMoveButton("L", 10, 477, moveLeft_buttonClick);
+            CreateMoveButton("D", 33, 519, moveDown_buttonClick);
+            CreateMoveButton("R", 56, 477, moveRight_buttonClick);
         }
 
         /// <summary>
@@ -242,8 +273,8 @@ namespace Sokoban
         /// <param name="part">The part.</param>
         public void CreateLevelGridButton(int row, int col, Parts part)
         {
-            Point p = new Point(LEVELDESIGNLEFTMARGIN + col * LEVELDESIGNBTNSIZE,
-                50 + row * LEVELDESIGNBTNSIZE);
+            Point p = new Point(LEVELDESIGNLEFTMARGIN + col * LEVELDESIGNBTNSIZE + ((20 - Rows) / 2) * LEVELDESIGNBTNSIZE,
+                60 + row * LEVELDESIGNBTNSIZE + ((20 - Cols) / 2) * LEVELDESIGNBTNSIZE);
             Button newButton = new Button();
             newButton.Name = String.Format("{0}_{1}", row, col);
             newButton.Visible = true;
@@ -256,7 +287,7 @@ namespace Sokoban
                 newButton.BackgroundImage = IH.GetMyPart(part);
                 newButton.BackgroundImageLayout = ImageLayout.Stretch;
             }
-            this.Controls.Add(newButton);
+            Controls.Add(newButton);
         }
 
         /// <summary>
@@ -274,7 +305,7 @@ namespace Sokoban
             newButton.Height = 40;
             newButton.Location = new Point(x, y);
             newButton.Click += new EventHandler(myClick);
-            this.Controls.Add(newButton);
+            Controls.Add(newButton);
         }
 
         /// <summary>
@@ -293,7 +324,7 @@ namespace Sokoban
             newButton.Height = CTRLBTNHEIGHT;
             newButton.Location = p;
             newButton.Click += new EventHandler(myClick);
-            this.Controls.Add(newButton);
+            Controls.Add(newButton);
         }
 
         /// <summary>
@@ -359,7 +390,7 @@ namespace Sokoban
 
         //Button Clicks        
         /// <summary>
-        /// Changes a level grid button to the image selected by the radio button.
+        /// Changes the level grid button to the image selected by the radio button.
         /// Passes this change to the controller.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
@@ -376,7 +407,17 @@ namespace Sokoban
         }
 
         /// <summary>
-        /// Opens a new level in the designer button handler.
+        /// Removes a game state buttonClick handler.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        protected void GameDeleteState_buttonClick(object sender, System.EventArgs e)
+        {
+            Ctrl.DeleteState();
+        }
+
+        /// <summary>
+        /// Opens a new level in the designer - buttonClick handler.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
@@ -402,7 +443,7 @@ namespace Sokoban
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void levelDesignerLoad_buttonClick(object sender, System.EventArgs e)
         {
-            Ctrl.LoadLevel(Ctrl.Design_ST);
+            Ctrl.LoadLevelDesign();
         }
 
         /// <summary>
@@ -422,7 +463,7 @@ namespace Sokoban
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         protected void gameLoad_buttonClick(object sender, System.EventArgs e)
         {
-            Ctrl.LoadLevel(Ctrl.Game_ST);
+            Ctrl.LoadLevelGame();
         }
 
         /// <summary>
@@ -554,16 +595,26 @@ namespace Sokoban
             sfd.Filter = "level files (*.lvl)|*.lvl";
             sfd.Title = "Save This Level";
             sfd.DefaultExt = "lvl";
-            sfd.InitialDirectory = (initialDir == string.Empty) ? Path.Combine(Application.StartupPath, @"levels\") : initialDir;
+            sfd.InitialDirectory = initialDir;
             sfd.ShowDialog();
             return sfd.FileName;
         }
 
+        /// <summary>
+        /// Displays the specified message as a dialog.
+        /// </summary>
+        /// <param name="message">The message.</param>
         public void Display(string message)
         {
             MessageBox.Show(message);
         }
 
+        /// <summary>
+        /// Gets the input. 
+        /// User name or state name.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <returns></returns>
         public string GetInput(string message)
         {
             InputForm inForm = new InputForm();
@@ -572,6 +623,10 @@ namespace Sokoban
             return inForm.GetResult();
         }
 
+        /// <summary>
+        /// Gets the size of the level to be created in designer.
+        /// </summary>
+        /// <returns>Array {rows, columns}</returns>
         public int[] GetLevelSize()
         {
             SizeDialog sd = new SizeDialog();
@@ -579,6 +634,13 @@ namespace Sokoban
             return new int[] { sd.GetRows(), sd.GetCols() };
         }
 
+        /// <summary>
+        /// Gets the user response.
+        /// Yes, No, Cancel
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="caption">The caption.</param>
+        /// <returns></returns>
         public string GetUserResponse(string message, string caption)
         {
             switch (MessageBox.Show(message, caption, MessageBoxButtons.YesNoCancel))
@@ -592,6 +654,11 @@ namespace Sokoban
             }
         }
 
+        /// <summary>
+        /// Gets the file to load.
+        /// </summary>
+        /// <param name="initialDir">The initial directory to open.</param>
+        /// <returns>The full file path</returns>
         public string GetFileToLoad(string initialDir)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -603,6 +670,12 @@ namespace Sokoban
             return ofd.FileName;
         }
 
+        /// <summary>
+        /// Displays the states saved for this level in a dialog.
+        /// The user can select one.
+        /// </summary>
+        /// <param name="states">The states.</param>
+        /// <returns>The name of the selected state</returns>
         public string GetSelectedState(string[] states)
         {
             StateLoadDialog sld = new StateLoadDialog();

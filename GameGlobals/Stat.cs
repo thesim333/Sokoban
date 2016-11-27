@@ -1,5 +1,8 @@
 ﻿namespace GameGlobals
 {
+    /// <summary>
+    /// Holds a Stat to and from a file.
+    /// </summary>
     public class Stat
     {
         protected string name;

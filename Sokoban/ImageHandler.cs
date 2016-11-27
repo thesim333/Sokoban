@@ -3,6 +3,9 @@ using GameGlobals;
 
 namespace Sokoban
 {
+    /// <summary>
+    /// Holds information for images used in the application.
+    /// </summary>
     public class ImageHandler
     {
         public readonly Image Wall = Image.FromFile("wall38.jpg");
@@ -14,6 +17,11 @@ namespace Sokoban
         public readonly Image Empty = Image.FromFile("empty38.jpg");
         public readonly Image MainPic = Image.FromFile("main.png");
 
+        /// <summary>
+        /// Gets the image representing the Part.
+        /// </summary>
+        /// <param name="part">The part.</param>
+        /// <returns>The image</returns>
         public Image GetMyPart(Parts part)
         {
             switch (part)

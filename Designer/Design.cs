@@ -2,6 +2,10 @@
 
 namespace Designer
 {
+    /// <summary>
+    /// Designer Model for the sokoban application.
+    /// </summary>
+    /// <seealso cref="Designer.IDesign" />
     public class Design : IDesign
     {
         protected Parts[,] LevelGrid;
@@ -78,7 +82,6 @@ namespace Designer
         public void NewLevel(int rows, int cols)
         {
             LevelGrid = GetNew2DArray(rows, cols, Parts.Empty);
-            Name = string.Empty;
             UnSavedChanges = false;
         }
 
@@ -146,6 +149,7 @@ namespace Designer
 
         /// <summary>
         /// Determines if the number of blocks is equal to the number of targets.
+        /// Also that there is at least one of each block and target.
         /// </summary>
         /// <returns><c>true</c> if ==; otherwise, <c>false</c></returns>
         public bool BlocksEqualTargets()
@@ -162,7 +166,7 @@ namespace Designer
                     {
                         blocks++;
                     }
-                    else if (LevelGrid[r, c] == Parts.Goal
+                    if (LevelGrid[r, c] == Parts.Goal
                         || LevelGrid[r, c] == Parts.PlayerOnGoal
                         || LevelGrid[r, c] == Parts.BlockOnGoal)
                     {
@@ -170,7 +174,7 @@ namespace Designer
                     }
                 }
             }
-            return (blocks == targets);
+            return ((blocks == targets) && (blocks != 0));
         }
     }
 }

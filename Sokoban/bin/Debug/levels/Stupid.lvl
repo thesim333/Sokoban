@@ -65,6 +65,26 @@
       <Name>s</Name>
       <Moves>1</Moves>
     </Stat>
+    <Stat>
+      <Name>S</Name>
+      <Moves>1</Moves>
+    </Stat>
+    <Stat>
+      <Name>S</Name>
+      <Moves>1</Moves>
+    </Stat>
+    <Stat>
+      <Name>S</Name>
+      <Moves>1</Moves>
+    </Stat>
+    <Stat>
+      <Name>S</Name>
+      <Moves>1</Moves>
+    </Stat>
+    <Stat>
+      <Name>S</Name>
+      <Moves>1</Moves>
+    </Stat>
   </Stats>
   <Grid>5#5-,#@$.#5-,5#5-,10-,10-,10-,10-,10-,10-,10-</Grid>
   <States />

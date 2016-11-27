@@ -9,6 +9,10 @@ using System.Collections.Generic;
 
 namespace Filer
 {
+    /// <summary>
+    /// File handling class for xml based level files.
+    /// </summary>
+    /// <seealso cref="Filer.IFiler" />
     public class TheFiler : IFiler
     {
         protected string CurrentDirectory;
@@ -184,9 +188,14 @@ namespace Filer
             int moves = int.Parse(thisQ.moves);
             Position player = new Position(thisQ.player);
             return new State(moves, player, thisQ.blocks);
-            
         }
-
+        /*
+        public string[] GetAllLevels()
+        {
+            string[] theFiles = Directory.GetFiles(CurrentDirectory + @"levels\*.lvl");
+            return theFiles.Select(x => Path.GetFileName(x)).ToArray();
+        }
+        */
         /// <summary>
         /// Does the state exist.
         /// </summary>

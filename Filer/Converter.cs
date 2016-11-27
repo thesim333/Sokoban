@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
 namespace Filer
 {
+    /// <summary>
+    /// Compress and Expansion tools for grid strings.
+    /// </summary>
+    /// <seealso cref="Filer.IConverter" />
     public class Converter : IConverter
     {
         /// <summary>

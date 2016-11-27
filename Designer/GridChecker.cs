@@ -3,6 +3,10 @@ using GameGlobals;
 
 namespace Designer
 {
+    /// <summary>
+    /// Checker tool for legality of a level.
+    /// </summary>
+    /// <seealso cref="Designer.IGridChecker" />
     public class GridChecker : IGridChecker
     {
         protected char[,] MyGrid;
@@ -85,7 +89,7 @@ namespace Designer
         /// </returns>
         protected bool IsNextToEdge(Position p)
         {
-            if (p.Row < 0 || p.Column < 0 || p.Row > MyGrid.GetLength(0) || p.Column > MyGrid.GetLength(1))
+            if (p.Row == 0 || p.Column == 0 || p.Row == MyGrid.GetLength(0) - 1 || p.Column == MyGrid.GetLength(1) - 1)
             {
                 return true;
             }

@@ -6,7 +6,7 @@ namespace Sokoban
     {
         void DesignerNewLevel(int rows, int cols);
         void CreateLevelGridButton(int row, int col, Parts part);
-        void DesignerLoadLevel();
+        void DesignerLoadLevel(int rows, int cols);
         void DisplayMain();
         void GameSetup(int moves, int rows, int cols);
         void SetMoves(int moves);

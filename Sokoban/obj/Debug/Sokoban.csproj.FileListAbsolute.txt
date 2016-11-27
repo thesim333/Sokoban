@@ -17,8 +17,6 @@ C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Sokoban\ob
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Sokoban\bin\Debug\Sokoban.exe.config
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Sokoban\obj\Debug\Sokoban.exe
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Sokoban\obj\Debug\Sokoban.pdb
-C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Sokoban\obj\Debug\Sokoban.FileSaveNameDialog.resources
-C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Sokoban\obj\Debug\Sokoban.LoadFileFromListDialog.resources
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Sokoban\obj\Debug\Sokoban.csprojResolveAssemblyReference.cache
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Sokoban\obj\Debug\Sokoban.FileSaveNameDialog.resources
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Sokoban\obj\Debug\Sokoban.FormMain.resources
@@ -36,3 +34,5 @@ C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Sokoban\bi
 C:\Users\Simon\SkyDrive\Documents\Visual Studio 2015\Projects\Sokoban\Sokoban\bin\Debug\Game.pdb
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Sokoban\bin\Debug\GameGlobals.dll
 C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Sokoban\bin\Debug\GameGlobals.pdb
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Sokoban\obj\Debug\Sokoban.InputForm.resources
+C:\Users\lamee\OneDrive\documents\visual studio 2015\Projects\Sokoban\Sokoban\obj\Debug\Sokoban.StateLoadDialog.resources

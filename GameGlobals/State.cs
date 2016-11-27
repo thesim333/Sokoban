@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace GameGlobals
 {
+    /// <summary>
+    /// Holds a game state for transfer between Game and the file.
+    /// </summary>
     public class State
     {
         protected Position _player;
@@ -47,6 +50,10 @@ namespace GameGlobals
             _blocks = blocks;
         }
 
+        /// <summary>
+        /// Makes the blocks position list from a string of rows and columns.
+        /// </summary>
+        /// <param name="theBlocks">The blocks.</param>
         protected void MakeBlocksList(string theBlocks)
         {
             string[] each = theBlocks.Split(';');

@@ -6,7 +6,12 @@ using GameGlobals;
 
 namespace Sokoban
 {
-    public class SokobanController
+    /// <summary>
+    /// Controller for Sokoban application.
+    /// Requires use of View and Models.
+    /// </summary>
+    /// <seealso cref="Sokoban.IController" />
+    public class SokobanController : IController
     {
         protected IGame Game;
         protected IView View;
@@ -14,25 +19,9 @@ namespace Sokoban
         protected IFiler Filer;
         protected IGridChecker GridCheck;
         protected IFileChecker FileCheck;
-        private const string GAME_STRING = "Game";
-        private const string DESIGN_STRING = "Design";
-
-        public string Game_ST
-        {
-            get
-            {
-                return GAME_STRING;
-            }
-        }
-
-        public string Design_ST
-        {
-            get
-            {
-                return DESIGN_STRING;
-            }
-        }
-
+        private const string GAME_STRING = "GAME";
+        private const string DESIGN_STRING = "DESIGN";
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="SokobanController"/> class.
         /// </summary>
@@ -79,14 +68,15 @@ namespace Sokoban
         /// </summary>
         public void CheckDesignerLevel()
         {
+            string tick = "\u221A";
             string players;
-            string blocks = (Designer.BlocksEqualTargets()) ? "\u221A" : "X";
+            string blocks = (Designer.BlocksEqualTargets()) ? tick : "X";
             string edge;
 
             if (Designer.HasOnePlayer())
             {
-                players = "\u221A";
-                edge = (CheckLevelPlayerEdge()) ? "\u221A" : "X";
+                players = tick;
+                edge = (CheckLevelPlayerEdge()) ? tick : "X";
             }
             else
             {
@@ -135,7 +125,7 @@ namespace Sokoban
 
             for (int i = 0; i < scores.Length; i++)
             {
-                display.Append(i);
+                display.Append(i + 1);
                 display.Append("\t");
                 display.Append(scores[i].Name);
                 display.Append("\t");
@@ -156,14 +146,24 @@ namespace Sokoban
             NewGame();
         }
 
+        public void LoadLevelDesign()
+        {
+            LoadLevel(DESIGN_STRING);
+        }
+
+        public void LoadLevelGame()
+        {
+            LoadLevel(GAME_STRING);
+        }
+
         /// <summary>
         /// Loads the level.
         /// </summary>
         /// <param name="which">Which object to load the level for Designer or Game</param>
-        public void LoadLevel(string which)
+        protected void LoadLevel(string which)
         {
             string filePath = View.GetFileToLoad(Filer.GetCurrentPath());
-            if (FileCheck.FileChecksOut(filePath))
+            if (filePath.Length > 0 && FileCheck.FileChecksOut(filePath))
             {
                 string grid = Filer.LoadGrid(filePath);
 
@@ -177,7 +177,7 @@ namespace Sokoban
                         break;
                 }
             }
-            else
+            else if (filePath.Length > 0)
             {
                 View.Display("There is a problem with that file.");
             }
@@ -214,14 +214,23 @@ namespace Sokoban
         /// </summary>
         public void LoadGameState()
         {
-            string[] states = Filer.GetAllStates();
-            string theState = View.GetSelectedState(states);            
+            string theState = GetStateName();         
 
             if (theState.Length > 0)
             {
                 Game.LoadState(Filer.LoadState(theState));
                 CreateGameView();
             }
+        }
+
+        /// <summary>
+        /// Gets the name of the state from user selection of all states in this level file.
+        /// </summary>
+        /// <returns></returns>
+        protected string GetStateName()
+        {
+            string[] states = Filer.GetAllStates();
+            return View.GetSelectedState(states);
         }
 
         /// <summary>
@@ -248,7 +257,7 @@ namespace Sokoban
             Designer.LoadLevel(level);
             int rows = Designer.GetRowCount();
             int cols = Designer.GetColumnCount();
-            View.DesignerLoadLevel();
+            View.DesignerLoadLevel(rows, cols);
 
             for (int r = 0; r < rows; r++)
             {
@@ -330,6 +339,10 @@ namespace Sokoban
             }
             else if (result == "N")
             {
+                return true;
+            }
+            else if (result == "C")
+            {
                 return false;
             }
             return true;
@@ -395,6 +408,21 @@ namespace Sokoban
                     View.Display("State " + state + " saved");
                     break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets a list of states for the level loaded.
+        /// Deletes the state selected by the user.
+        /// </summary>
+        public void DeleteState()
+        {
+            string stateName = GetStateName();
+
+            if (stateName.Length > 0)
+            {
+                Filer.DeleteState(stateName);
+                View.Display("State " + stateName + " removed");
             }
         }
     }

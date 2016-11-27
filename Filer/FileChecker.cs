@@ -2,8 +2,17 @@
 
 namespace Filer
 {
+    /// <summary>
+    /// Checker for the level files.
+    /// </summary>
+    /// <seealso cref="Filer.IFileChecker" />
     public class FileChecker : IFileChecker
     {
+        /// <summary>
+        /// Checks the file for inconsistancies in the xml.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <returns></returns>
         public bool FileChecksOut(string fileName)
         {
             try
